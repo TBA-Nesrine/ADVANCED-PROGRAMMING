@@ -9,20 +9,28 @@ There is also an admin area where the administrator can manage books and users.
 The administrator has the same rights as a client, with additional privileges for system management.
 
 ## - Main Features:
-User authentication (login / logout)
-Role management: client and administrator (the admin can also act as a client)
-Viewing available books
-Displaying short descriptions for each book
-Simple navigation between client and admin pages
+-User authentication (login / logout).
+
+-Role management: client and administrator (the admin can also act as a client).
+
+-Viewing available books.
+
+-Displaying short descriptions for each book.
+
+-Simple navigation between client and admin pages.
 
 ## - Technologies Used:
-Framework: Django
-Language: Python
-Database: SQL
+Framework: Django.
+
+Language: Python.
+
+Database: SQL.
 
 ## - Project Team:
 Project developed by:
 
-Anfal BOUCHAREB
-Nesrine TAIEB BENABBES
-Lilia KAMIRI
+Anfal BOUCHAREB.
+
+Nesrine TAIEB BENABBES.
+
+Lilia KAMIRI.
