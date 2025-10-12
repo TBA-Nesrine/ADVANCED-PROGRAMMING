@@ -1,6 +1,6 @@
 # ADVANCED-PROGRAMMING
  
- ## Library Organization Application
+ ## Library Organization Application:
 
  ## - Project Description:
 This project aims to manage and organize an online library using the Django framework.
