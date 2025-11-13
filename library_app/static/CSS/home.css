@@ -1,0 +1,87 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f9ff;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #e6f0ff;
+    padding: 15px 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.logo {
+    height: 50px;
+    margin-right: 10px;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.library-name {
+    color: #003366;
+}
+
+.nav-right .btn {
+    margin-left: 10px;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid #004aad;
+    color: #004aad;
+    transition: 0.3s;
+}
+
+.nav-right .btn:hover {
+    background-color: #004aad;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #004aad;
+    color: white;
+}
+
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #cbe3ff, #eaf4ff);
+}
+
+.why-reading {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.books {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.book-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.book-card {
+    background: white;
+    border-radius: 10px;
+    width: 250px;
+    padding: 20px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+footer {
+    background: #003366;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+}

@@ -1,0 +1,12 @@
+{% extends 'library_app/base_admin.html' %}
+{% block content %}
+<h2>Add New Book</h2>
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="title" placeholder="Book Title" required><br>
+    <input type="text" name="author" placeholder="Author" required><br>
+    <input type="number" name="quantity" placeholder="Quantity" required><br>
+    <textarea name="description" placeholder="Description"></textarea><br>
+    <button type="submit">Add Book</button>
+</form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'library_app/base_user.html' %}
+{% block content %}
+<h2>Contact Us / Feedback</h2>
+<form method="POST">
+{% csrf_token %}
+<select name="book_id">
+<option value="">General</option>
+{% for book in books %}
+<option value="{{ book.id }}">{{ book.title }}</option>
+{% endfor %}
+</select>
+<textarea name="feedback" placeholder="Your feedback..." required></textarea><br>
+<button type="submit">Send</button>
+</form>
+{% endblock %}

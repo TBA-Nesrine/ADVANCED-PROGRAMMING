@@ -1,0 +1,19 @@
+{% extends 'library_app/base_user.html' %}
+{% block content %}
+<h2>Welcome {{ user.first_name }}</h2>
+<section>
+<h3>Most Read Books</h3>
+<table>
+<tr><th>Title</th><th>Author</th><th>Times Read</th></tr>
+{% for book in most_read_books %}
+<tr>
+<td>{{ book.title }}</td>
+<td>{{ book.author }}</td>
+<td>{{ book.read_count }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="3">No books yet</td></tr>
+{% endfor %}
+</table>
+</section>
+{% endblock %}

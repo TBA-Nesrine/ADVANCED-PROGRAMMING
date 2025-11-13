@@ -1,0 +1,54 @@
+body { font-family: 'Poppins', sans-serif; background:#f5f9ff; margin:0; }
+nav { background:#004aad; color:white; padding:15px; display:flex; justify-content:space-between; align-items:center; }
+nav .nav-left { display:flex; align-items:center; gap:10px; }
+nav .logo { height:50px; }
+nav ul { list-style:none; display:flex; gap:15px; }
+nav ul li a { color:white; text-decoration:none; font-weight:500; }
+main { padding:20px; }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { border:1px solid #ccc; padding:10px; text-align:left; }
+button { padding:5px 10px; border:none; background:#004aad; color:white; cursor:pointer; border-radius:4px; }
+button:disabled { background:#aaa; cursor:not-allowed; }
+input, textarea, select { padding:6px; margin:5px 0; width:100%; border:1px solid #ccc; border-radius:4px; }
+.auth-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 25px;
+    background:white;
+    border-radius:8px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+.auth-container h2 {
+    text-align:center;
+    margin-bottom:20px;
+}
+.auth-container form input, .auth-container form button {
+    display:block;
+    width:100%;
+    margin-bottom:10px;
+}
+.auth-container form button {
+    background:#004aad;
+    color:white;
+    border:none;
+    padding:10px;
+    border-radius:5px;
+    cursor:pointer;
+}
+.auth-container form button:hover {
+    background:#003366;
+}
+.auth-container .messages {
+    list-style:none;
+    padding:0;
+    margin-bottom:10px;
+}
+.auth-container .messages li {
+    padding:8px;
+    border-radius:5px;
+}
+.auth-container .messages li.error { background:#f8d7da; color:#721c24; }
+.auth-container .messages li.success { background:#d4edda; color:#155724; }
+.auth-container p { text-align:center; margin-top:15px; }
+.auth-container a { color:#004aad; text-decoration:none; }
+.auth-container a:hover { text-decoration:underline; }

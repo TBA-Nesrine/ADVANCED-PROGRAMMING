@@ -1,0 +1,11 @@
+body { font-family: 'Poppins', sans-serif; background:#f0f2f5; margin:0; }
+nav { background:#003366; color:white; padding:15px; display:flex; justify-content:space-between; align-items:center; }
+nav .nav-left { display:flex; align-items:center; gap:10px; }
+nav .logo { height:50px; }
+nav ul { list-style:none; display:flex; gap:15px; }
+nav ul li a { color:white; text-decoration:none; font-weight:500; }
+main { padding:20px; }
+table { width:100%; border-collapse:collapse; margin-top:15px; }
+th, td { border:1px solid #ccc; padding:10px; text-align:left; }
+button { padding:5px 10px; border:none; background:#004aad; color:white; cursor:pointer; border-radius:4px; }
+button:disabled { background:#aaa; cursor:not-allowed; }

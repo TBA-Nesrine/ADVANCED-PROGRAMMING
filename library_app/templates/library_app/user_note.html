@@ -1,0 +1,17 @@
+{% extends 'library_app/base_user.html' %}
+{% block content %}
+<h2>Books You Read</h2>
+<table>
+<tr><th>Book</th><th>Quantity</th><th>Date Borrowed</th><th>Date Returned</th></tr>
+{% for order in read_books %}
+<tr>
+<td>{{ order.book.title }}</td>
+<td>{{ order.quantity }}</td>
+<td>{{ order.date_rent }}</td>
+<td>{{ order.date_return }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="4">You haven't read any books yet</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

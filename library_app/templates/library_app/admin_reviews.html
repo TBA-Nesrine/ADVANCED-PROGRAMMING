@@ -1,0 +1,23 @@
+{% extends 'library_app/base_admin.html' %}
+{% block content %}
+<h2>User Reviews / Feedback</h2>
+<table>
+<tr><th>User</th><th>Book</th><th>Feedback</th><th>Date</th></tr>
+{% for review in reviews %}
+<tr>
+<td>{{ review.user.username }}</td>
+<td>
+  {% if review.book %}
+    {{ review.book.title }}
+  {% else %}
+    General
+  {% endif %}
+</td>
+<td>{{ review.feedback }}</td>
+<td>{{ review.date }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="4">No feedback yet</td></tr>
+{% endfor %}
+</table>
+{% endblock %}<!---->

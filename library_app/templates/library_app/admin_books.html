@@ -1,0 +1,32 @@
+{% extends 'library_app/base_admin.html' %}
+{% block content %}
+<h2>Books Management</h2>
+
+<form method="GET">
+    <input type="text" name="q" placeholder="Search by title/author">
+    <button type="submit">Search</button>
+</form>
+
+<a href="{% url 'admin_add_book' %}">Add New Book</a>
+
+<table>
+<tr><th>Title</th><th>Author</th><th>Quantity</th><th>Actions</th></tr>
+{% for book in books %}
+<tr>
+<td>{{ book.title }}</td>
+<td>{{ book.author }}</td>
+<td>{{ book.quantity }}</td>
+<td>
+  {% for genre in book.genres.all %}
+    {{ genre.name }}{% if not forloop.last %}, {% endif %}
+  {% empty %}
+    No genres
+  {% endfor %}
+</td>
+<td><a href="{% url 'admin_delete_book' book.id %}">Delete</a></td>
+</tr>
+{% empty %}
+<tr><td colspan="4">No books yet</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

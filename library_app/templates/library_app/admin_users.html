@@ -1,0 +1,16 @@
+{% extends 'library_app/base_admin.html' %}
+{% block content %}
+<h2>All Users</h2>
+<table>
+    <tr><th>Username</th><th>Full Name</th><th>Email</th></tr>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.first_name }}</td>
+        <td>{{ user.email }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">No users yet</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

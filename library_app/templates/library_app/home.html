@@ -1,10 +1,64 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Library Home</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 <body>
-    <h1>Welcome to the Library Management System</h1>
-    <p><a href="{% url 'login' %}">Login</a> | <a href="{% url 'signup' %}">Sign Up</a></p>
+
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="{% static 'logo.png' %}" alt="Library Logo" class="logo">
+        <h2 class="library-name">City Library</h2>
+    </div>
+    <div class="nav-right">
+        {% if user.is_authenticated %}
+            <span>Hello, {{ user.first_name }}!</span>
+            <a href="{% url 'logout' %}" class="btn">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+        {% endif %}
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Welcome to the City Library</h1>
+    <p>Your gateway to knowledge and imagination.</p>
+</section>
+
+<section class="why-reading">
+    <h2>Why Reading Matters</h2>
+    <p>
+        Reading helps expand your thinking, improves memory, and transports you to new worlds.
+        Whether for knowledge or pleasure, every book makes you wiser.
+    </p>
+</section>
+
+<section class="books">
+    <h2>📚 Most Read Books</h2>
+    <div class="book-container">
+        {% for book in most_read_books %}
+        <div class="book-card">
+            <h3>{{ book.title }}</h3>
+            <p class="author">by {{ book.author }}</p>
+            <p><strong>Times Read:</strong> {{ book.read_count }}</p>
+            {% if book.reviews %}
+                <p>⭐ {{ book.reviews }} / 5</p>
+            {% endif %}
+            <p class="desc">{{ book.description|truncatewords:20 }}</p>
+        </div>
+        {% empty %}
+        <p>No reading statistics yet.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<footer>
+    <p>&copy; {{ now.year }} City Library. All Rights Reserved.</p>
+</footer>
+
 </body>
 </html>
