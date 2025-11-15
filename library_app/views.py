@@ -1,4 +1,6 @@
 # this is the class that intereacts with the databse
+import uuid
+
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -8,6 +10,8 @@ from django.contrib import messages
 from django.db.models import Count, Q
 from .models import Book, Order, Review
 from django.utils import timezone
+from .models import *
+
 
 # ---------------- AUTH ----------------
 def signup_user(request):
@@ -53,10 +57,8 @@ def admin_home(request):
     most_read_books = Book.objects.annotate(read_count=Count('order')).order_by('-read_count')[:5]
     return render(request, 'library_app/admin_home.html', {'most_read_books': most_read_books})
 
-@login_required
-def admin_users(request):
-    users = User.objects.filter(is_superuser=False)
-    return render(request, 'library_app/admin_users.html', {'users': users})
+
+
 
 @login_required
 def admin_books(request):
@@ -156,3 +158,74 @@ def user_contactus(request):
 def user_note(request):
     read_books = Order.objects.filter(user=request.user, date_return__isnull=False)
     return render(request, 'library_app/user_note.html', {'read_books': read_books})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import user
+
+# Users table
+@login_required
+def admin_users(request):
+    query = request.GET.get("q", "").strip()
+
+    if query:
+        users = user.objects.filter(
+            Q(user_name__icontains=query) |
+            Q(email__icontains=query) |
+            Q(reference_id__icontains=query)
+        )
+    else:
+        users = user.objects.all()
+
+    context = {
+        "users": users,
+        "search_query": query
+    }
+
+    return render(request, "library_app/admin_users.html", context)
+
+# Activate a user
+def activate_user(request, ref):
+    u = get_object_or_404(user, reference_id=ref)
+    u.active = True
+    u.save()
+    return redirect('admin_users')  # back to the users table
+
+# Deactivate a user
+def deactivate_user(request, ref):
+    u = get_object_or_404(user, reference_id=ref)
+    u.active = False
+    u.save()
+    return redirect('admin_users')
+
+def admin_add_user(request):
+    error = None
+
+    if request.method == 'POST':
+        ref_id = request.POST.get('reference_id', '').strip()
+        username = request.POST.get('user_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone_contact', '').strip()
+        address = request.POST.get('user_address', '').strip()
+
+        # Validation
+        if not ref_id or not username or not email or not phone or not address:
+            error = "All fields are required."
+        elif user.objects.filter(reference_id=ref_id).exists():
+            error = "Reference ID already exists."
+        elif user.objects.filter(email=email).exists():
+            error = "Email already exists."
+        elif user.objects.filter(phone_contact=phone).exists():
+            error = "Phone number already exists."
+        else:
+            user.objects.create(
+                reference_id=ref_id,
+                user_name=username,
+                email=email,
+                phone_contact=phone,
+                user_address=address,
+                active=True
+            )
+            return redirect('admin_users')
+
+    return render(request, 'library_app/admin_add_user.html', {'error': error})

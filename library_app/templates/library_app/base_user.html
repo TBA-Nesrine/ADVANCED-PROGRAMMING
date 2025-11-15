@@ -5,24 +5,91 @@
     <meta charset="UTF-8">
     <title>User Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/user.css' %}">
+    <style>
+        /* Flash message styles */
+        #msg-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 99999;
+        }
+
+        #msg-container .msg-item {
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: slideIn 0.5s forwards;
+            position: relative;
+        }
+
+        /* Color-coded messages */
+        .msg-item.success { background: #d4edda; color: #155724; }
+        .msg-item.error   { background: #f8d7da; color: #721c24; }
+        .msg-item.info    { background: #d1ecf1; color: #0c5460; }
+        .msg-item.warning { background: #fff3cd; color: #856404; }
+
+        /* Animations */
+        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideOut { to { opacity: 0; transform: translateY(-20px); } }
+    </style>
 </head>
 <body>
-<nav>
-    <div class="nav-left">
-        <img src="{% static 'logo.png' %}" alt="Logo" class="logo">
-        <h2>Library</h2>
+
+    {% if messages %}
+    <div id="msg-container">
+        {% for message in messages %}
+            <div class="msg-item
+                {% if 'success' in message.tags %}success
+                {% elif 'error' in message.tags %}error
+                {% elif 'warning' in message.tags %}warning
+                {% else %}info{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
     </div>
-    <ul>
-        <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'user_books' %}">Books</a></li>
-        <li><a href="{% url 'user_mybag' %}">My Bag</a></li>
-        <li><a href="{% url 'user_contactus' %}">Contact Us</a></li>
-        <li><a href="{% url 'user_note' %}">Note</a></li>
-        <li><a href="{% url 'logout' %}">Logout</a></li>
-    </ul>
-</nav>
-<main>
-    {% block content %}{% endblock %}
-</main>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const items = document.querySelectorAll("#msg-container .msg-item");
+        items.forEach((item, index) => {
+            // Slide out after 3s + stagger
+            setTimeout(() => { 
+                item.style.animation = "slideOut 0.5s forwards"; 
+            }, 3000 + index * 200);
+
+            // Remove from DOM after animation
+            setTimeout(() => item.remove(), 3500 + index * 200);
+        });
+    });
+    </script>
+    {% endif %}
+
+    <nav>
+        <div class="nav-left">
+            <img src="{% static 'logo.png' %}" alt="Logo" class="logo">
+            <h2>Library</h2>
+        </div>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'user_books' %}">Books</a></li>
+            <li><a href="{% url 'user_mybag' %}">My Bag</a></li>
+            <li><a href="{% url 'user_contactus' %}">Contact Us</a></li>
+            <li><a href="{% url 'user_note' %}">Note</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
 </body>
 </html>

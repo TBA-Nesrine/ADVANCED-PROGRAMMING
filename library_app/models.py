@@ -36,3 +36,13 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.book.title if self.book else 'General'}"
+
+class user(models.Model):
+    def __str__(self):
+        return self.User_name
+    reference_id=models.CharField(max_length=100, unique=True)
+    user_name=models.CharField(max_length=150)
+    email=models.EmailField(unique=True)
+    phone_contact=models.CharField(max_length=15, unique=True)
+    user_address=models.TextField()
+    active=models.BooleanField(default=True)
