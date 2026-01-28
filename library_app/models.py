@@ -24,6 +24,8 @@ class Order(models.Model):
     date_rent = models.DateTimeField(auto_now_add=True)
     date_return = models.DateTimeField(blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
+    confirmed = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f"{self.user.username} -> {self.book.title}"
@@ -37,12 +39,12 @@ class Review(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.book.title if self.book else 'General'}"
 
-class user(models.Model):
+class User(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    reference_id = models.CharField(max_length=100, unique=True)
+    phone_contact = models.CharField(max_length=15, unique=True)
+    user_address = models.TextField()
+    active = models.BooleanField(default=True)
+
     def __str__(self):
-        return self.User_name
-    reference_id=models.CharField(max_length=100, unique=True)
-    user_name=models.CharField(max_length=150)
-    email=models.EmailField(unique=True)
-    phone_contact=models.CharField(max_length=15, unique=True)
-    user_address=models.TextField()
-    active=models.BooleanField(default=True)
+        return self.user.username

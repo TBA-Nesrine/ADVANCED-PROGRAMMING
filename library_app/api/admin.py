@@ -1,0 +1,83 @@
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from django.db.models import Count
+from django.contrib.auth.models import User
+from ..models import Book, Order, Review
+from ..serializers import BookSerializer, OrderSerializer, ReviewSerializer,UserSerializer
+
+@api_view(['GET'])
+def admin_dashboard(request):
+    books = Book.objects.annotate(read_count=Count('order')).order_by('-read_count')[:5]
+    return Response(BookSerializer(books, many=True).data)
+
+@api_view(['POST'])
+def admin_add_book(request):
+    serializer = BookSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=201)
+
+@api_view(['DELETE'])
+def admin_delete_book(request, book_id):
+    Book.objects.filter(id=book_id).delete()
+    return Response({"message": "deleted"})
+
+@api_view(['PATCH'])
+def admin_update_book(request, book_id):
+    book = Book.objects.get(id=book_id)
+    serializer = BookSerializer(book, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def admin_orders(request):
+    orders = Order.objects.select_related('user', 'book')
+    return Response(OrderSerializer(orders, many=True).data)
+
+@api_view(['PATCH'])
+def confirm_order(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return Response({"error": "Order not found"}, status=404)
+
+    if order.confirmed:
+        return Response({"message": "Order already confirmed"}, status=200)
+
+    order.confirmed = True
+    order.save()
+
+    return Response({"message": f"Order {order.id} confirmed successfully"})
+
+@api_view(['GET'])
+def admin_reviews(request):
+    return Response(ReviewSerializer(Review.objects.all(), many=True).data)
+
+@api_view(['GET'])
+def admin_users(request):
+    users = User.objects.all()
+    return Response(UserSerializer(users, many=True).data)
+
+@api_view(['PATCH'])
+def admin_update_user(request, user_id):
+    user = User.objects.get(id=user_id)
+    serializer = UserSerializer(user, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
+
+@api_view(['PATCH'])
+def activate_user(request, ref):
+    u = User.objects.get(reference_id=ref)
+    u.active = True
+    u.save()
+    return Response({"message": "activated"})
+
+@api_view(['PATCH'])
+def deactivate_user(request, ref):
+    u = User.objects.get(reference_id=ref)
+    u.active = False
+    u.save()
+    return Response({"message": "deactivated"})
