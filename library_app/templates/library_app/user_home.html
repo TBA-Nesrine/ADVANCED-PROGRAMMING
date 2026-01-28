@@ -1,19 +1,63 @@
-{% extends 'library_app/base_user.html' %}
-{% block content %}
-<h2>Welcome {{ user.first_name }}</h2>
-<section>
-<h3>Most Read Books</h3>
-<table>
-<tr><th>Title</th><th>Author</th><th>Times Read</th></tr>
-{% for book in most_read_books %}
-<tr>
-<td>{{ book.title }}</td>
-<td>{{ book.author }}</td>
-<td>{{ book.read_count }}</td>
-</tr>
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PageTurn Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/user_home.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="nav-left">
+        <h2>📖 PageTurn Library</h2>
+        <a href="#"><button class="nav-btn">Browse Books</button></a>
+    </div>
+    <div>
+        👤 {{ request.user.username }}
+    </div>
+</div>
+
+
+<form method="GET" class="search-box" action="{% url 'user_home' %}">
+    <input type="text" name="q" placeholder="Search books..." value="{{ search_query }}">
+    <button type="submit">Search</button>
+</form>
+
+<div class="genres">
+    <form method="GET" action="{% url 'user_home' %}">
+        <button type="submit" name="genre" value="All" class="{% if active_genre == 'All' %}active{% endif %}">All</button>
+        {% for g in genres %}
+        <button type="submit" name="genre" value="{{ g.name }}" class="{% if active_genre == g.name %}active{% endif %}">
+            {{ g.name }}
+        </button>
+        {% endfor %}
+    </form>
+</div>
+
+<div class="books">
+{% for book in books %}
+    <div class="card">
+        <h3>{{ book.title }}</h3>
+        <p>{{ book.author }}</p>
+        <p>⭐ {{ book.reviews|default:"N/A" }}</p>
+
+        {% if book.quantity > 0 %}
+        <form method="POST" action="{% url 'user_borrow_book' %}">
+            {% csrf_token %}
+            <input type="hidden" name="book_id" value="{{ book.id }}">
+            <button>Borrow</button>
+        </form>
+        {% else %}
+            <p>❌ Not available</p>
+        {% endif %}
+    </div>
 {% empty %}
-<tr><td colspan="3">No books yet</td></tr>
+    <p>No books available.</p>
 {% endfor %}
-</table>
-</section>
-{% endblock %}
+</div>
+
+
+</body>
+</html>

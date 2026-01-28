@@ -3,6 +3,7 @@ from .auth import signup_api, login_api
 from .admin import *
 from .user import *
 
+
 urlpatterns = [
     #auth
     path('auth/signup/', signup_api),
@@ -27,4 +28,8 @@ urlpatterns = [
     path('user/mybag/', user_mybag),
     path('user/return/', user_return_book),
     path('user/feedback/', user_feedback),
+
+    
+    
+
 ]
