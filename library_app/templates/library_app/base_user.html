@@ -3,93 +3,186 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Library{% endblock %}</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'css/user.css' %}">
-    <style>
-        /* Flash message styles */
-        #msg-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 320px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 99999;
-        }
-
-        #msg-container .msg-item {
-            padding: 15px 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            font-size: 14px;
-            font-weight: 500;
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: slideIn 0.5s forwards;
-            position: relative;
-        }
-
-        /* Color-coded messages */
-        .msg-item.success { background: #d4edda; color: #155724; }
-        .msg-item.error   { background: #f8d7da; color: #721c24; }
-        .msg-item.info    { background: #d1ecf1; color: #0c5460; }
-        .msg-item.warning { background: #fff3cd; color: #856404; }
-
-        /* Animations */
-        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideOut { to { opacity: 0; transform: translateY(-20px); } }
-    </style>
+    
+    {% block extra_css %}{% endblock %}
 </head>
-<body>
-
-    {% if messages %}
-    <div id="msg-container">
-        {% for message in messages %}
-            <div class="msg-item
-                {% if 'success' in message.tags %}success
-                {% elif 'error' in message.tags %}error
-                {% elif 'warning' in message.tags %}warning
-                {% else %}info{% endif %}">
-                {{ message }}
+<body class="user-body">
+    <!-- Background Elements -->
+    <div class="user-bg-elements">
+        <div class="bg-element"></div>
+        <div class="bg-element"></div>
+        <div class="bg-element"></div>
+    </div>
+    
+    <!-- Modern Navigation -->
+    <nav class="user-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="{% static 'logo.png' %}" alt="Library Logo" class="nav-logo">
+                <div class="brand-text">
+                    <h1 class="brand-title">Modern Library</h1>
+                    <p class="brand-tagline">Discover • Read • Enjoy</p>
+                </div>
             </div>
+            
+            <div class="nav-search">
+                <form method="GET" action="{% url 'user_home' %}">
+                    <input type="text" name="q" placeholder="Search books, authors, genres..." value="{{ request.GET.q|default:'' }}">
+                    <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="{% url 'user_home' %}" class="nav-link {% if request.path == '/user/home/' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{% url 'user_books' %}" class="nav-link {% if 'user_books' in request.path %}active{% endif %}">
+                    <i class="fas fa-book-open"></i>
+                    <span>Books</span>
+                </a>
+                <a href="{% url 'user_mybag' %}" class="nav-link {% if 'user_mybag' in request.path %}active{% endif %}">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>My Bag</span>
+                    <span class="badge" id="bagCount">{{ bag_count|default:"0" }}</span>
+                </a>
+                <a href="{% url 'user_contactus' %}" class="nav-link {% if 'user_contactus' in request.path %}active{% endif %}">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact</span>
+                </a>
+                <a href="{% url 'user_note' %}" class="nav-link {% if 'user_note' in request.path %}active{% endif %}">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notes</span>
+                </a>
+                
+                <div class="nav-divider"></div>
+                
+                <div class="user-dropdown">
+                    <button class="user-btn" id="userBtn">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="user-name">
+                            {% if user.first_name %}
+                                {{ user.first_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                        </span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="{% url 'user_profile' %}" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i>
+                            My Profile
+                        </a>
+                        <a href="{% url 'user_note' %}" class="dropdown-item">
+                            <i class="fas fa-history"></i>
+                            Reading History
+                        </a>
+                        <a href="{% url 'user_settings' %}" class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'logout' %}" class="dropdown-item logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% if messages %}
+    <div class="user-flash-container">
+        {% for message in messages %}
+        <div class="user-flash-message flash-{{ message.tags }}">
+            <div class="flash-icon">
+                <i class="fas fa-{% if 'success' in message.tags %}check-circle{% elif 'error' in message.tags %}exclamation-circle{% elif 'warning' in message.tags %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+            </div>
+            <div class="flash-content">
+                <p>{{ message }}</p>
+            </div>
+            <button class="flash-close">&times;</button>
+        </div>
         {% endfor %}
     </div>
-
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const items = document.querySelectorAll("#msg-container .msg-item");
-        items.forEach((item, index) => {
-            // Slide out after 3s + stagger
-            setTimeout(() => { 
-                item.style.animation = "slideOut 0.5s forwards"; 
-            }, 3000 + index * 200);
-
-            // Remove from DOM after animation
-            setTimeout(() => item.remove(), 3500 + index * 200);
-        });
-    });
-    </script>
     {% endif %}
-
-    <nav>
-        <div class="nav-left">
-            <img src="{% static 'logo.png' %}" alt="Logo" class="logo">
-            <h2>Library</h2>
-        </div>
-        <ul>
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'user_books' %}">Books</a></li>
-            <li><a href="{% url 'user_mybag' %}">My Bag</a></li>
-            <li><a href="{% url 'user_contactus' %}">Contact Us</a></li>
-            <li><a href="{% url 'user_note' %}">Note</a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>
-        </ul>
-    </nav>
-
-    <main>
+    
+    <!-- Main Content -->
+    <main class="user-main">
         {% block content %}{% endblock %}
     </main>
+    
+    <!-- Footer -->
+    <footer class="user-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <img src="{% static 'logo.png' %}" alt="Logo" class="footer-logo">
+                <p class="footer-description">
+                    A modern digital library bringing the joy of reading to your fingertips.
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="{% url 'user_home' %}">Home</a>
+                <a href="{% url 'user_books' %}">Browse Books</a>
+                <a href="{% url 'user_mybag' %}">My Bag</a>
+                <a href="{% url 'user_contactus' %}">Contact Us</a>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Reading Guides</a>
+                <a href="#">Book Clubs</a>
+                <a href="#">Author Events</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; {% now "Y" %} Modern Library. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script>
+        // Mobile Navigation Toggle
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+        navToggle.addEventListener('click', () => navMenu.classList.toggle('show'));
 
+        // User Dropdown
+        const userBtn = document.getElementById('userBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        userBtn.addEventListener('click', e => { e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
+        document.addEventListener('click', () => dropdownMenu.classList.remove('show'));
+
+        // Close flash messages
+        document.querySelectorAll('.flash-close').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.user-flash-message').remove();
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

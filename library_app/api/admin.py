@@ -68,16 +68,39 @@ def admin_update_user(request, user_id):
     serializer.save()
     return Response(serializer.data)
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from library_app.models import UserProfile
+
 @api_view(['PATCH'])
 def activate_user(request, ref):
-    u = User.objects.get(reference_id=ref)
-    u.active = True
-    u.save()
+    try:
+        profile = UserProfile.objects.get(reference_id=ref)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+    
+    profile.active = True
+    profile.save()
     return Response({"message": "activated"})
 
 @api_view(['PATCH'])
 def deactivate_user(request, ref):
-    u = User.objects.get(reference_id=ref)
-    u.active = False
-    u.save()
+    try:
+        profile = UserProfile.objects.get(reference_id=ref)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+    
+    profile.active = False
+    profile.save()
     return Response({"message": "deactivated"})
+
+
+@api_view(['POST'])
+def admin_add_user(request):
+    """
+    API endpoint for admin to add a new user.
+    """
+    serializer = UserSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=201)

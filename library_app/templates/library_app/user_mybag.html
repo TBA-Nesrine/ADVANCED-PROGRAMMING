@@ -1,4 +1,5 @@
 {% extends 'library_app/base_user.html' %}
+{% block title %}My Bag | PageTurn Library{% endblock %}
 
 {% block content %}
 <h2>My Bag</h2>
@@ -10,10 +11,10 @@
 <td>{{ order.quantity }}</td>
 <td>{{ order.date_rent }}</td>
 <td>
-<form method="POST">
+<form method="POST" action="{% url 'user_return_book' %}">
 {% csrf_token %}
 <input type="hidden" name="order_id" value="{{ order.id }}">
-<button type="submit">Return</button>
+<button>Return</button>
 </form>
 </td>
 </tr>

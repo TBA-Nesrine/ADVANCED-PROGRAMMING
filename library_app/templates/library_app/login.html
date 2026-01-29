@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="{% static 'css/user.css' %}">
 </head>
 <body>
+
 <div class="auth-container">
     <h2>Login</h2>
+
     {% if messages %}
         <ul class="messages">
         {% for message in messages %}
@@ -16,13 +18,18 @@
         {% endfor %}
         </ul>
     {% endif %}
-    <form method="POST">
+
+    <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
         <input type="text" name="account_name" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
     </form>
-    <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+
+    <p>Don't have an account?
+        <a href="{% url 'signup' %}">Sign up here</a>
+    </p>
 </div>
+
 </body>
 </html>

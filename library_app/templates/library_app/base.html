@@ -8,28 +8,16 @@
 </head>
 <body>
 
-    {% if messages %}
-    <div id="msg-container" style="position:fixed; top:20px; right:20px; z-index:9999;">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}" 
-                 style="padding:12px 18px; margin-bottom:8px; border-radius:8px;">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+{% if messages %}
+<div id="msg-container" style="position:fixed; top:20px; right:20px; z-index:9999;">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
 
-    <script>
-        setTimeout(function () {
-            const box = document.getElementById("msg-container");
-            if (box) {
-                box.style.transition = "opacity 1s";
-                box.style.opacity = "0";
-                setTimeout(() => box.remove(), 1000);
-            }
-        }, 4000);
-    </script>
-
-    {% block content %}{% endblock %}
+{% block content %}{% endblock %}
 </body>
 </html>

@@ -1,10 +1,12 @@
 {% extends 'library_app/base_user.html' %}
+{% block title %}Books | PageTurn Library{% endblock %}
+
 {% block content %}
 <h2>Available Books</h2>
 
-<form method="GET">
-<input type="text" name="q" placeholder="Search by title/author">
-<button type="submit">Search</button>
+<form method="GET" action="{% url 'user_home' %}">
+    <input type="text" name="q" placeholder="Search by title/author" value="{{ request.GET.q }}">
+    <button type="submit">Search</button>
 </form>
 
 <table>
@@ -15,10 +17,10 @@
     <td>{{ book.author }}</td>
     <td>{{ book.quantity }}</td>
     <td>
-        <form method="POST">
+        <form method="POST" action="{% url 'user_borrow_book' %}">
             {% csrf_token %}
             <input type="hidden" name="book_id" value="{{ book.id }}">
-            <button type="submit" {% if book.quantity == 0 %}disabled{% endif %}>Borrow</button>
+            <button {% if book.quantity == 0 %}disabled{% endif %}>Borrow</button>
         </form>
     </td>
 </tr>

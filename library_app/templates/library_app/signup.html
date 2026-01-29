@@ -4,11 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Sign Up</title>
-    <link rel="stylesheet" href="{% static 'css/user.css' %}">
+    
 </head>
 <body>
+
 <div class="auth-container">
     <h2>Create Account</h2>
+
     {% if messages %}
         <ul class="messages">
         {% for message in messages %}
@@ -16,7 +18,8 @@
         {% endfor %}
         </ul>
     {% endif %}
-    <form method="POST">
+
+    <form method="POST" action="{% url 'signup' %}">
         {% csrf_token %}
         <input type="text" name="full_name" placeholder="Full Name" required>
         <input type="email" name="email" placeholder="Email" required>
@@ -25,7 +28,11 @@
         <input type="password" name="confirm_password" placeholder="Confirm Password" required>
         <button type="submit">Sign Up</button>
     </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+
+    <p>Already have an account?
+        <a href="{% url 'login' %}">Login here</a>
+    </p>
 </div>
+
 </body>
 </html>
