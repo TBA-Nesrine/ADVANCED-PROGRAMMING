@@ -1,6 +1,10 @@
 from django.shortcuts import redirect
 from django.urls import path, include
 from . import views
+from django.urls import path
+from library_app.api.user import *
+from django.urls import path
+from . import views
 
 urlpatterns = [
 
@@ -46,8 +50,12 @@ path('user/mybag/', views.user_mybag_view, name='user_mybag'),
 path('user/return/', views.return_book, name='user_return_book'),
 path('user/notes/', views.user_note_view, name='user_note'),
 path('user/contact/', views.user_contactus, name='user_contactus'),
-path('user/profile/', views.user_profile, name='user_profile'),
+
 path('user/settings/', views.user_settings, name='user_settings'),
+
+path("user/profile/", views.user_profile_view, name="user_profile"),
+path("user/profile/edit/", views.edit_profile_view, name="edit_profile"),
+path("user/change-password/", views.change_password_view, name="change_password"),
 
 
 ]

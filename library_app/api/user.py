@@ -1,8 +1,16 @@
-from rest_framework.decorators import api_view
+
 from rest_framework.response import Response
 from django.utils import timezone
 from ..models import Book, Order, Review
 from ..serializers import BookSerializer, OrderSerializer
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+from library_app.models import UserProfile
+from django.contrib.auth.models import User
+from library_app.serializers import UserSerializer
 
 @api_view(['GET'])
 def user_books(request):
@@ -48,3 +56,57 @@ def user_feedback(request):
         feedback=request.data['feedback']
     )
     return Response({"message": "feedback sent"})
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.models import User
+from library_app.models import UserProfile
+from library_app.serializers import UserProfileSerializer
+
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from library_app.serializers import UserSerializer
+
+
+@api_view(['GET'])
+def get_user_profile(request):
+
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
+
+
+@api_view(['PUT'])
+def update_user_profile(request):
+
+    serializer = UserSerializer(
+        request.user,
+        data=request.data,
+        partial=True
+    )
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+
+    return Response(serializer.errors, status=400)
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from rest_framework import status
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    form = PasswordChangeForm(request.user, request.data)
+    if form.is_valid():
+        user = form.save()
+        update_session_auth_hash(request, user)  # keep user logged in
+        return Response({"message": "Password changed successfully"})
+    else:
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)

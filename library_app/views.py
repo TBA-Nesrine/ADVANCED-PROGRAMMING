@@ -271,6 +271,9 @@ def deactivate_user_view(request, ref):
 # USER VIEWS
 # =========================
 
+from django.db.models import Q
+from .models import Genre
+
 @login_required
 def user_home(request):
     factory = APIRequestFactory()
@@ -278,11 +281,39 @@ def user_home(request):
     api_request.user = request.user
 
     response = user_books(api_request)
+    books = response.data  # list of dicts
+
+    search_query = request.GET.get("q", "").lower()
+    genre_filter = request.GET.get("genre", "All").lower()
+
+    # SEARCH FILTER
+    if search_query:
+        books = [
+            book for book in books
+            if search_query in book["title"].lower()
+            or search_query in book["author"].lower()
+            or (book.get("description") and search_query in book["description"].lower())
+        ]
+
+    # GENRE FILTER
+    if genre_filter != "all":
+        filtered_books = []
+        for book in books:
+            # book["genres"] contains IDs
+            book_genre_ids = book.get("genres", [])
+            # get genre names
+            book_genre_names = Genre.objects.filter(id__in=book_genre_ids).values_list('name', flat=True)
+            if any(genre_filter == name.lower() for name in book_genre_names):
+                filtered_books.append(book)
+        books = filtered_books
 
     return render(request, "library_app/user_home.html", {
-        "books": response.data,
-        "genres": Genre.objects.all()
+        "books": books,
+        "genres": Genre.objects.all(),
+        "search_query": request.GET.get("q", ""),
+        "active_genre": request.GET.get("genre", "All"),
     })
+
 
 
 @csrf_exempt
@@ -372,6 +403,140 @@ def user_settings(request):
     return render(request, "library_app/user_settings.html")
 
 
+"""
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from library_app.models import UserProfile
+
+@login_required
+def user_profile(request):
+    # Get the profile if it exists, otherwise create a new one
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    return render(request, 'library_app/user_profile.html', {"profile": profile})
+
+@login_required
+def change_profile(request):
+    # Get or create the profile
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        # Update User model fields
+        request.user.first_name = request.POST.get("full_name")
+        request.user.email = request.POST.get("email")
+        request.user.save()
+        
+        # Update UserProfile model fields
+        profile.phone_contact = request.POST.get("phone_contact")
+        profile.user_address = request.POST.get("user_address")
+        profile.save()
+
+        messages.success(request, "Profile updated successfully!")
+        return redirect('user_profile')  # redirect back to profile page
+
+    return render(request, 'library_app/change_profile.html', {"profile": profile})
 
 
+"""
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+
+@login_required
+def user_profile(request):
+    return render(request, "library_app/user_profile.html")
+
+
+@login_required
+def edit_profile(request):
+
+    user = request.user
+
+    if request.method == "POST":
+        user.first_name = request.POST.get("first_name")
+        user.last_name = request.POST.get("last_name")
+        user.username = request.POST.get("username")
+        user.email = request.POST.get("email")
+
+        user.save()
+
+        messages.success(request, "Profile updated successfully!")
+        return redirect("user_profile")
+
+    return render(request, "library_app/edit_profile.html")
+
+
+@login_required
+def change_password(request):
+
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+
+        if form.is_valid():
+            user = form.save()
+
+            # VERY IMPORTANT:
+            update_session_auth_hash(request, user)
+
+            messages.success(request, "Password changed successfully!")
+            return redirect("user_profile")
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(request, "library_app/change_password.html", {
+        "form": form
+    })
+
+from rest_framework.test import APIRequestFactory
+from django.contrib.auth.decorators import login_required
+from .api.user import *
+
+
+
+@login_required
+def user_profile_view(request):
+    factory = APIRequestFactory()
+    api_request = factory.get("/api/user/profile/")
+    api_request.user = request.user
+
+    response = get_user_profile(api_request)
+    return render(request, "library_app/user_profile.html", {"profile": response.data})
+
+from .api.user import update_user_profile
+
+
+@login_required
+def edit_profile_view(request):
+    factory = APIRequestFactory()
+
+    if request.method == "GET":
+        api_request = factory.get("/api/user/profile/")
+        api_request.user = request.user
+
+        response = get_user_profile(api_request)
+        return render(request, "library_app/edit_profile.html", {"profile": response.data})
+
+    elif request.method == "POST":
+        api_request = factory.put("/api/user/profile/update/", request.POST)
+        api_request.user = request.user
+
+        update_user_profile(api_request)
+        return redirect("user_profile")
+
+@login_required
+def change_password_view(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Password changed successfully!")
+            return redirect("user_profile")
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(request, "library_app/change_password.html", {"form": form})
 

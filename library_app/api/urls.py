@@ -29,7 +29,10 @@ urlpatterns = [
     path('user/return/', user_return_book),
     path('user/feedback/', user_feedback),
 
-    
+    path('user/profile/', get_user_profile, name='user_profile_api'),   # GET
+    path('user/profile/update/', update_user_profile, name='update_user_profile_api'),  # PUT
+    path('user/change-password/', change_password, name='change_password_api'),  # PUT
+
     
 
 ]

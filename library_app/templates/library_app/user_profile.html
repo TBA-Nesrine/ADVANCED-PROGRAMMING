@@ -1,3 +1,26 @@
-<!-- library_app/templates/library_app/user_profile.html -->
-<h1>My Profile</h1>
-<p>This page is under construction.</p>
+{% extends 'library_app/base_user.html' %}
+
+{% block content %}
+
+<h2>My Profile</h2>
+
+<p><strong>Full Name:</strong>
+{{ profile.first_name }} {{ profile.last_name }}
+</p>
+
+<p><strong>Username:</strong>
+{{ profile.username }}
+</p>
+
+<p><strong>Email:</strong>
+{{ profile.email }}
+</p>
+
+<p><strong>Password:</strong> ********</p>
+
+<a href="{% url 'edit_profile' %}">
+    <button>Change Profile</button>
+</a>
+<a href="{% url 'change_password' %}">Change Password</a>
+
+{% endblock %}

@@ -33,13 +33,13 @@
                     <p class="brand-tagline">Discover • Read • Enjoy</p>
                 </div>
             </div>
-            
+            <!--
             <div class="nav-search">
                 <form method="GET" action="{% url 'user_home' %}">
                     <input type="text" name="q" placeholder="Search books, authors, genres..." value="{{ request.GET.q|default:'' }}">
                     <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
                 </form>
-            </div>
+            </div> -->
             
             <div class="nav-menu" id="navMenu">
                 <a href="{% url 'user_home' %}" class="nav-link {% if request.path == '/user/home/' %}active{% endif %}">

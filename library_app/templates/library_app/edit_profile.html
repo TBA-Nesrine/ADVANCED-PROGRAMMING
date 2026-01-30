@@ -1,0 +1,32 @@
+{% extends 'library_app/base_user.html' %}
+
+{% block content %}
+
+<h2>Edit Profile</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input name="first_name"
+           value="{{ profile.first_name }}"
+           placeholder="First Name">
+
+    <input name="last_name"
+           value="{{ profile.last_name }}"
+           placeholder="Last Name">
+
+    <input name="username"
+           value="{{ profile.username }}"
+           placeholder="Username">
+
+    <input name="email"
+           value="{{ profile.email }}"
+           placeholder="Email">
+
+    <button type="submit">
+        Save Changes
+    </button>
+
+</form>
+
+{% endblock %}
