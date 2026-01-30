@@ -31,16 +31,20 @@
         {% endif %}
     </td>
     <td>
-        {% if u.active %}
-        <form method="POST" action="{% url 'deactivate_user' u.reference_id %}">
-            {% csrf_token %}
-            <button>Deactivate</button>
-        </form>
+        {% if u.reference_id %}
+            {% if u.active %}
+            <form method="POST" action="{% url 'deactivate_user' u.reference_id %}">
+                {% csrf_token %}
+                <button>Deactivate</button>
+            </form>
+            {% else %}
+            <form method="POST" action="{% url 'activate_user' u.reference_id %}">
+                {% csrf_token %}
+                <button>Activate</button>
+            </form>
+            {% endif %}
         {% else %}
-        <form method="POST" action="{% url 'activate_user' u.reference_id %}">
-            {% csrf_token %}
-            <button>Activate</button>
-        </form>
+            <span style="color:red;">No reference ID</span>
         {% endif %}
     </td>
 </tr>
