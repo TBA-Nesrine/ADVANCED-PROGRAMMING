@@ -21,8 +21,8 @@
 {% for u in users %}
 <tr>
     <td>{{ u.reference_id }}</td>
-    <td>{{ u.user_name }}</td>
-    <td>{{ u.email }}</td>
+    <td>{{ u.user.username }}</td>
+    <td>{{ u.user.email }}</td>
     <td>
         {% if u.active %}
             <span style="color:green;">Active</span>

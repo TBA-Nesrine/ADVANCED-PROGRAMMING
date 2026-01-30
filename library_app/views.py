@@ -140,13 +140,20 @@ def admin_add_book_view(request):
             "author": request.POST.get("author"),
             "quantity": request.POST.get("quantity"),
             "description": request.POST.get("description"),
+            "genres": request.POST.getlist("genres"),
         })
         api_request.user = request.user
 
-        admin_add_book(api_request)
+        response = admin_add_book(api_request)
+
+        print(response.data)  # <-- VERY useful for debugging
+
         return redirect("admin_books")
 
-    return render(request, "library_app/admin_add_book.html")
+    return render(request, "library_app/admin_add_book.html", {
+    "genres": Genre.objects.all()
+     })
+
 
 
 @login_required

@@ -8,6 +8,11 @@
     <input type="text" name="title" placeholder="Book Title" required><br>
     <input type="text" name="author" placeholder="Author" required><br>
     <input type="number" name="quantity" placeholder="Quantity" required><br>
+    <select name="genres" multiple>
+        {% for genre in genres %}
+        <option value="{{ genre.id }}">{{ genre.name }}</option>
+    {% endfor %}
+    </select>
     <textarea name="description" placeholder="Description"></textarea><br>
     <button type="submit">Add Book</button>
 </form>
