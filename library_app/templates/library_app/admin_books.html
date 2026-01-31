@@ -1,18 +1,111 @@
 {% extends 'library_app/base_admin.html' %}
 {% block content %}
 
-<h2>Books Management</h2>
+<style>
+/* Page title */
+.page-title {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #7b3f3f;
+}
 
-<form method="GET" action="{% url 'admin_books' %}">
-    <input type="text" name="q" placeholder="Search by title/author" value="{{ request.GET.q }}">
+/* Search bar */
+.search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.search-form input {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 260px;
+}
+
+.search-form button {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    background: #6b8e95;
+    color: white;
+    cursor: pointer;
+}
+
+/* Add button */
+.add-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 12px 20px;
+    background: #7b3f3f;
+    color: #fff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.add-btn:hover {
+    background: #632f2f;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+th, td {
+    padding: 14px 16px;
+    text-align: left;
+}
+
+th {
+    background: #f3f1ee;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #555;
+}
+
+tr:not(:last-child) td {
+    border-bottom: 1px solid #eee;
+}
+
+/* Delete button - SAME SIZE AS SEARCH BUTTON */
+.delete-btn {
+    background: #8b4a4a;
+    color: white;
+    border: none;
+    padding: 10px 18px;     /* same as search button */
+    border-radius: 8px;     /* same as search button */
+    cursor: pointer;
+    font-size: 14px;        /* default button text size */
+}
+
+.delete-btn:hover {
+    background: #6e3838;
+}
+</style>
+
+<h2 class="page-title">Books Management</h2>
+
+<form method="GET" action="{% url 'admin_books' %}" class="search-form">
+    <input type="text" name="q" placeholder="Search by title or author" value="{{ request.GET.q }}">
     <button type="submit">Search</button>
 </form>
 
-<a href="{% url 'admin_add_book' %}">Add New Book</a>
+<a href="{% url 'admin_add_book' %}" class="add-btn">+ Add New Book</a>
 
 <table>
 <tr>
-    <th>Title</th><th>Author</th><th>Quantity</th><th>Actions</th>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Quantity</th>
+    <th>Actions</th>
 </tr>
 
 {% for book in books %}
@@ -23,12 +116,14 @@
     <td>
         <form method="POST" action="{% url 'admin_delete_book' book.id %}">
             {% csrf_token %}
-            <button type="submit">Delete</button>
+            <button type="submit" class="delete-btn">Delete</button>
         </form>
     </td>
 </tr>
 {% empty %}
-<tr><td colspan="4">No books yet</td></tr>
+<tr>
+    <td colspan="4">No books yet</td>
+</tr>
 {% endfor %}
 </table>
 

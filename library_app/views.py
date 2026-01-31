@@ -248,7 +248,7 @@ def admin_add_user_view(request):
 
 
 @login_required
-def activate_user_view(request, ref):
+def activate_user_view(request, user_id):
     factory = APIRequestFactory()
     api_request = factory.patch(f"/admin/users/activate/{ref}/")
     api_request.user = request.user
@@ -258,7 +258,7 @@ def activate_user_view(request, ref):
 
 
 @login_required
-def deactivate_user_view(request, ref):
+def deactivate_user_view(request, user_id):
     factory = APIRequestFactory()
     api_request = factory.patch(f"/admin/users/deactivate/{ref}/")
     api_request.user = request.user

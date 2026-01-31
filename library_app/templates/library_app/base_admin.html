@@ -1,39 +1,84 @@
-{% extends 'library_app/base.html' %}
-{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
 
-<h2>Add New User</h2>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-{% if messages %}
-    {% for message in messages %}
-        <p class="{{ message.tags }}">{{ message }}</p>
-    {% endfor %}
-{% endif %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+        }
+        .sidebar {
+            width: 220px;
+            background-color: #685C55;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+            color: #ecf0f1;
+        }
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+        .sidebar a:hover {
+            background-color: #854049;
+        }
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+            color: #854049;
+        }
+        .logout-btn {
+            text-decoration: none;
+            color: white;
+            background-color: #854049;
+            padding: 8px 16px;
+            border-radius: 4px;
+        }
+        .logout-btn:hover {
+            background-color: #41302C;
+        }
+    </style>
+</head>
 
-{% if error %}
-    <p style="color:red; font-weight:600;">{{ error }}</p>
-{% endif %}
+<body>
 
-<form method="POST" action="{% url 'admin_add_user' %}">
-    {% csrf_token %}
+<div class="sidebar">
+    <h2 style="text-align:center; color: #C2A88E;">Admin</h2>
+    <a href="{% url 'admin_home' %}">Dashboard Home</a>
+    <a href="{% url 'admin_books' %}">Books</a>
+    <a href="{% url 'admin_orders' %}">Orders</a>
+    <a href="{% url 'admin_reviews' %}">Reviews</a>
+    <a href="{% url 'admin_users' %}">Users</a>
+    <a href="{% url 'logout' %}">Logout</a>
+</div>
 
-    <label for="reference_id">Reference ID:</label><br>
-    <input type="text" name="reference_id" id="reference_id" value="{{ request.POST.reference_id|default_if_none:'' }}"><br><br>
+<div class="main-content">
+    <div class="header">
+        <h1>Welcome, {{ request.user.first_name|default:request.user.username }}</h1>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
 
-    <label for="user_name">Name:</label><br>
-    <input type="text" name="user_name" id="user_name" value="{{ request.POST.user_name|default_if_none:'' }}" required><br><br>
+    {% block content %}{% endblock %}
+</div>
 
-    <label for="email">Email:</label><br>
-    <input type="email" name="email" id="email" value="{{ request.POST.email|default_if_none:'' }}" required><br><br>
-
-    <label for="phone_contact">Phone:</label><br>
-    <input type="text" name="phone_contact" id="phone_contact" value="{{ request.POST.phone_contact|default_if_none:'' }}" required><br><br>
-
-    <label for="user_address">Address:</label><br>
-    <textarea name="user_address" id="user_address" required>{{ request.POST.user_address|default_if_none:'' }}</textarea><br><br>
-
-    <button type="submit">Add User</button>
-</form>
-
-<a href="{% url 'admin_users' %}">Back to Users</a>
-
-{% endblock %}
+</body>
+</html>
