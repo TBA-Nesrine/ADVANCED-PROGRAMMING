@@ -1,7 +1,9 @@
 {% extends 'library_app/base_user.html' %}
+
 {% block title %}Home | PageTurn Library{% endblock %}
 
 {% block content %}
+
 <h2>Welcome, {{ user.username }}!</h2>
 
 <form method="GET" class="search-box" action="{% url 'user_home' %}">
@@ -11,32 +13,53 @@
 
 <div class="genres">
     <form method="GET" action="{% url 'user_home' %}">
-        <button type="submit" name="genre" value="All" class="{% if active_genre == 'All' %}active{% endif %}">All</button>
+        <button type="submit" name="genre" value="All"
+            class="{% if active_genre == 'All' %}active{% endif %}">
+            All
+        </button>
+
         {% for g in genres %}
-        <button type="submit" name="genre" value="{{ g.name }}" class="{% if active_genre == g.name %}active{% endif %}">{{ g.name }}</button>
+            <button type="submit" name="genre" value="{{ g.name }}"
+                class="{% if active_genre == g.name %}active{% endif %}">
+                {{ g.name }}
+            </button>
         {% endfor %}
     </form>
 </div>
 
 <div class="books">
-{% for book in books %}
-    <div class="card">
-        <h3>{{ book.title }}</h3>
-        <p>{{ book.author }}</p>
-        <p>⭐ {{ book.reviews|default:"N/A" }}</p>
+    {% for book in books %}
+        <div class="card">
 
-        {% if book.quantity > 0 %}
-        <form method="POST" action="{% url 'user_borrow_book' %}">
-            {% csrf_token %}
-            <input type="hidden" name="book_id" value="{{ book.id }}">
-            <button>Borrow</button>
-        </form>
-        {% else %}
-            <p>❌ Not available</p>
-        {% endif %}
-    </div>
-{% empty %}
-    <p>No books available.</p>
-{% endfor %}
+            <!-- 📘 Book Cover -->
+            {% if book.image %}
+                <img src="{{ book.image }}"
+                     alt="{{ book.title }} cover"
+                     class="book-cover">
+            {% else %}
+                <img src="/static/images/default-book.png"
+                     alt="No cover"
+                     class="book-cover">
+            {% endif %}
+
+            <h3>{{ book.title }}</h3>
+            <p>{{ book.author }}</p>
+            <p>⭐ {{ book.reviews|default:"N/A" }}</p>
+
+            {% if book.quantity > 0 %}
+                <form method="POST" action="{% url 'user_borrow_book' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="book_id" value="{{ book.id }}">
+                    <button>Borrow</button>
+                </form>
+            {% else %}
+                <p>❌ Not available</p>
+            {% endif %}
+
+        </div>
+    {% empty %}
+        <p>No books available.</p>
+    {% endfor %}
 </div>
+
 {% endblock %}

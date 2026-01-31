@@ -2,6 +2,12 @@ from django.shortcuts import redirect
 from django.urls import path, include
 from . import views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
+
+
+
 urlpatterns = [
 
     # =====================
@@ -53,3 +59,9 @@ urlpatterns = [
     path('user/profile/edit/', views.edit_profile_view, name='edit_profile'),
     path('user/change-password/', views.change_password_view, name='change_password'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

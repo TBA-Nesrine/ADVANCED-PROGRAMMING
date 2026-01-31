@@ -187,6 +187,12 @@ TEMPLATES = [
     },
 ]
 
+
+
 # settings.py
 SITE_URL = "http://127.0.0.1:8000"  # or your production domain
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 

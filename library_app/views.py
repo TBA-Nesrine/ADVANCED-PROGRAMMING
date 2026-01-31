@@ -131,28 +131,40 @@ def admin_books(request):
     })
 
 
+from rest_framework.test import APIRequestFactory
+
 @login_required
 def admin_add_book_view(request):
     if request.method == "POST":
         factory = APIRequestFactory()
-        api_request = factory.post("/admin/books/add/", {
-            "title": request.POST.get("title"),
-            "author": request.POST.get("author"),
-            "quantity": request.POST.get("quantity"),
-            "description": request.POST.get("description"),
-            "genres": request.POST.getlist("genres"),
-        })
+
+        api_request = factory.post(
+            "/admin/books/add/",
+            data={
+                "title": request.POST.get("title"),
+                "author": request.POST.get("author"),
+                "quantity": request.POST.get("quantity"),
+                "description": request.POST.get("description"),
+                "genres": request.POST.getlist("genres"),
+            },
+            format="multipart"  # 👈 VERY IMPORTANT
+        )
+
+        # 👇 manually attach uploaded file
+        api_request.FILES["image"] = request.FILES.get("image")
+
         api_request.user = request.user
 
         response = admin_add_book(api_request)
 
-        print(response.data)  # <-- VERY useful for debugging
+        print(response.data)
 
         return redirect("admin_books")
 
     return render(request, "library_app/admin_add_book.html", {
-    "genres": Genre.objects.all()
-     })
+        "genres": Genre.objects.all()
+    })
+
 
 
 

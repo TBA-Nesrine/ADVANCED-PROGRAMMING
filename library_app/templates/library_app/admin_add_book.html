@@ -3,17 +3,24 @@
 
 <h2>Add New Book</h2>
 
-<form method="POST" action="{% url 'admin_add_book' %}">
+<form method="POST" action="{% url 'admin_add_book' %}" enctype="multipart/form-data">
     {% csrf_token %}
+
     <input type="text" name="title" placeholder="Book Title" required><br>
     <input type="text" name="author" placeholder="Author" required><br>
     <input type="number" name="quantity" placeholder="Quantity" required><br>
+
     <select name="genres" multiple>
         {% for genre in genres %}
-        <option value="{{ genre.id }}">{{ genre.name }}</option>
-    {% endfor %}
-    </select>
+            <option value="{{ genre.id }}">{{ genre.name }}</option>
+        {% endfor %}
+    </select><br>
+
     <textarea name="description" placeholder="Description"></textarea><br>
+
+    <!-- 👇 Book cover upload -->
+    <input type="file" name="image" accept="image/*"><br>
+
     <button type="submit">Add Book</button>
 </form>
 

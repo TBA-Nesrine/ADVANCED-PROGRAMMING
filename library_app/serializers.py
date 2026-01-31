@@ -22,6 +22,8 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = '__all__'
 
+
+
 class OrderSerializer(serializers.ModelSerializer):
     book = BookSerializer(read_only=True)
 

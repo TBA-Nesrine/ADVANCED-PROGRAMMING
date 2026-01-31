@@ -5,6 +5,10 @@ from django.db.models import Count
 from django.contrib.auth.models import User
 from ..models import Book, Order, Review
 from ..serializers import BookSerializer, OrderSerializer, ReviewSerializer,UserSerializer
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from ..serializers import BookSerializer
 
 @api_view(['GET'])
 def admin_dashboard(request):
@@ -12,6 +16,7 @@ def admin_dashboard(request):
     return Response(BookSerializer(books, many=True).data)
 
 @api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
 def admin_add_book(request):
     serializer = BookSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
