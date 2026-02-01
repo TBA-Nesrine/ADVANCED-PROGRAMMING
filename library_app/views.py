@@ -8,6 +8,15 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.test import APIRequestFactory
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from .models import Genre
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+
+
+
+
 
 # API imports
 from .api.auth import signup_api, login_api
@@ -30,17 +39,12 @@ from .api.user import (
     user_feedback,
 )
 
-from .models import Genre
 
 
 # =========================
 # AUTH VIEWS
 # =========================
 
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth import login, logout, authenticate
 
 # =========================
 # AUTH VIEWS
@@ -73,9 +77,7 @@ def signup_user(request):
     return render(request, "library_app/signup.html")
 
 
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
-from django.contrib import messages
+
 
 def login_user(request):
     if request.method == "POST":
@@ -262,20 +264,20 @@ def admin_add_user_view(request):
 @login_required
 def activate_user_view(request, user_id):
     factory = APIRequestFactory()
-    api_request = factory.patch(f"/admin/users/activate/{ref}/")
+    api_request = factory.patch(f"/admin/users/activate/{user_id}/")
     api_request.user = request.user
 
-    activate_user(api_request, ref)
+    activate_user(api_request, user_id)
     return redirect("admin_users")
 
 
 @login_required
 def deactivate_user_view(request, user_id):
     factory = APIRequestFactory()
-    api_request = factory.patch(f"/admin/users/deactivate/{ref}/")
+    api_request = factory.patch(f"/admin/users/deactivate/{user_id}/")
     api_request.user = request.user
 
-    deactivate_user(api_request, ref)
+    deactivate_user(api_request, user_id)
     return redirect("admin_users")
 
 

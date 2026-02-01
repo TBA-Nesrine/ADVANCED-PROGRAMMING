@@ -1,21 +1,12 @@
 {% extends "library_app/base_admin.html" %}
-
 {% block content %}
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-    <h2 style="color:#4A4A4A;">All Users</h2>
+<h2 style="color:#4A4A4A; margin-bottom:10px;">All Users</h2>
 
-    <a href="{% url 'admin_add_user' %}">
-        <button style="background:#854049; color:white; padding:8px 16px; border:none; border-radius:20px;">
-            Add New User
-        </button>
-    </a>
-</div>
-
-<form method="GET" action="{% url 'admin_users' %}" style="margin-bottom:20px;">
+<form method="GET" action="{% url 'admin_users' %}" style="margin-bottom:10px;">
     <input type="text"
            name="q"
-           placeholder="Search users..."
+           placeholder="Search..."
            value="{{ request.GET.q }}"
            style="padding:8px; width:300px; border-radius:6px;">
     <button type="submit"
@@ -24,11 +15,18 @@
     </button>
 </form>
 
+<!-- Add New User button just above the table, left-aligned -->
+<a href="{% url 'admin_add_user' %}" style="display:inline-block; margin-bottom:10px;">
+    <button style="background:#854049; color:white; padding:8px 16px; border:none; border-radius:20px;">
+        Add New User
+    </button>
+</a>
+
 <table style="width:100%; border-collapse:collapse;">
     <thead>
         <tr style="background:#f4f4f4;">
-            <th>ID</th>
-            <th>Username</th>
+            <th>Reference</th>
+            <th>Name</th>
             <th>Email</th>
             <th>Status</th>
             <th>Actions</th>
@@ -36,36 +34,39 @@
     </thead>
 
     <tbody>
-    {% for user in users %}
+    {% for u in users %}
         <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
+            <td>{{ u.reference_id }}</td>
+            <td>{{ u.user.username }}</td>
+            <td>{{ u.user.email }}</td>
             <td>
-                {% if user.is_active %}
+                {% if u.active %}
                     <span style="color:green;">Active</span>
                 {% else %}
                     <span style="color:red;">Inactive</span>
                 {% endif %}
             </td>
+
             <td style="display:flex; gap:10px;">
-
-                {% if user.is_active %}
-                    <form method="post" action="{% url 'deactivate_user' user.id %}">
-                        {% csrf_token %}
-                        <button style="background:#999; color:white; border:none; padding:5px 10px; border-radius:6px;">
-                            Deactivate
-                        </button>
-                    </form>
+                {% if u.reference_id %}
+                    {% if u.active %}
+                        <form method="POST" action="{% url 'deactivate_user' u.reference_id %}">
+                            {% csrf_token %}
+                            <button style="background:#999; color:white; border:none; padding:5px 10px; border-radius:6px;">
+                                Deactivate
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="POST" action="{% url 'activate_user' u.reference_id %}">
+                            {% csrf_token %}
+                            <button style="background:#854049; color:white; border:none; padding:5px 10px; border-radius:6px;">
+                                Activate
+                            </button>
+                        </form>
+                    {% endif %}
                 {% else %}
-                    <form method="post" action="{% url 'activate_user' user.id %}">
-                        {% csrf_token %}
-                        <button style="background:#854049; color:white; border:none; padding:5px 10px; border-radius:6px;">
-                            Activate
-                        </button>
-                    </form>
+                    <span style="color:red;">No reference ID</span>
                 {% endif %}
-
             </td>
         </tr>
     {% empty %}
