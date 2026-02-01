@@ -41,66 +41,55 @@
                 </form>
             </div> -->
             
-            <div class="nav-menu" id="navMenu">
-                <a href="{% url 'user_home' %}" class="nav-link {% if request.path == '/user/home/' %}active{% endif %}">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="{% url 'user_books' %}" class="nav-link {% if 'user_books' in request.path %}active{% endif %}">
-                    <i class="fas fa-book-open"></i>
-                    <span>Books</span>
-                </a>
-                <a href="{% url 'user_mybag' %}" class="nav-link {% if 'user_mybag' in request.path %}active{% endif %}">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span>My Bag</span>
-                    <span class="badge" id="bagCount">{{ bag_count|default:"0" }}</span>
-                </a>
-                <a href="{% url 'user_contactus' %}" class="nav-link {% if 'user_contactus' in request.path %}active{% endif %}">
-                    <i class="fas fa-envelope"></i>
-                    <span>Contact</span>
-                </a>
-                <a href="{% url 'user_note' %}" class="nav-link {% if 'user_note' in request.path %}active{% endif %}">
-                    <i class="fas fa-sticky-note"></i>
-                    <span>Notes</span>
-                </a>
-                
+            <a href="{% url 'user_home' %}" class="nav-link {% if request.path == '/user/home/' %}active{% endif %}">
+    <i class="fas fa-home"></i>
+    <span>Home</span>
+</a>
+<a href="{% url 'user_books' %}" class="nav-link {% if 'user_books' in request.path %}active{% endif %}">
+    <i class="fas fa-book-open"></i>
+    <span>Books</span>
+</a>
+<a href="{% url 'user_mybag' %}" class="nav-link {% if 'user_mybag' in request.path %}active{% endif %}">
+    <i class="fas fa-shopping-bag"></i>
+    <span>My Bag</span>
+    <span class="badge" id="bagCount">{{ bag_count|default:"0" }}</span>
+</a>
+<a href="{% url 'user_contactus' %}" class="nav-link {% if 'user_contactus' in request.path %}active{% endif %}">
+    <i class="fas fa-envelope"></i>
+    <span>Contact</span>
+</a>
+<!-- Optional: Keep Notes link only if you still want a general notes page -->
+<a href="{% url 'user_note' %}" class="nav-link {% if 'user_note' in request.path %}active{% endif %}">
+    <i class="fas fa-sticky-note"></i>
+    <span>Notes</span>
+</a>
+
                 <div class="nav-divider"></div>
                 
                 <div class="user-dropdown">
-                    <button class="user-btn" id="userBtn">
-                        <div class="user-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <span class="user-name">
-                            {% if user.first_name %}
-                                {{ user.first_name }}
-                            {% else %}
-                                {{ user.username }}
-                            {% endif %}
-                        </span>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="{% url 'user_profile' %}" class="dropdown-item">
-                            <i class="fas fa-user-circle"></i>
-                            My Profile
-                        </a>
-                        <a href="{% url 'user_note' %}" class="dropdown-item">
-                            <i class="fas fa-history"></i>
-                            Reading History
-                        </a>
-                        <a href="{% url 'user_settings' %}" class="dropdown-item">
-                            <i class="fas fa-cog"></i>
-                            Settings
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="{% url 'logout' %}" class="dropdown-item logout">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <button class="user-btn" id="userBtn">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span class="user-name">
+            {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}
+        </span>
+        <i class="fas fa-chevron-down"></i>
+    </button>
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="{% url 'user_profile' %}" class="dropdown-item">
+            <i class="fas fa-user-circle"></i> My Profile
+        </a>
+        <a href="{% url 'reading_history' %}" class="dropdown-item">
+            <i class="fas fa-history"></i> Reading History
+        </a>
+        <a href="{% url 'user_settings' %}" class="dropdown-item">
+            <i class="fas fa-cog"></i> Settings
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="{% url 'logout' %}" class="dropdown-item logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</div>
             
             <button class="nav-toggle" id="navToggle">
                 <i class="fas fa-bars"></i>

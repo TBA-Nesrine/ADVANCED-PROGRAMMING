@@ -19,25 +19,9 @@ from django.contrib.auth import login, logout, authenticate
 
 
 # API imports
-from .api.auth import signup_api, login_api
-from .api.admin import (
-    admin_dashboard,
-    admin_add_book,
-    admin_delete_book,
-    admin_orders,
-    admin_reviews,
-    admin_users,
-    admin_add_user,
-    activate_user,
-    deactivate_user,
-)
-from .api.user import (
-    user_books,
-    user_borrow_book,
-    user_mybag,
-    user_return_book,
-    user_feedback,
-)
+from .api.auth import *
+from .api.admin import *
+from .api.user import *
 
 
 
@@ -355,6 +339,21 @@ def user_mybag_view(request):
         "orders": response.data
     })
 
+@csrf_exempt
+@login_required
+def cancel_order(request):
+    if request.method == "POST":
+        factory = APIRequestFactory()
+        api_request = factory.post("/user/cancel/", {
+            "order_id": request.POST.get("order_id")
+        })
+        api_request.user = request.user
+
+        user_cancel_order(api_request)
+
+    return redirect("user_mybag")
+
+
 
 @csrf_exempt
 @login_required
@@ -368,7 +367,55 @@ def return_book(request):
 
         user_return_book(api_request)
 
-    return redirect("user_mybag")
+    return redirect("user_note")
+
+@login_required
+def reading_history(request):
+    history = Order.objects.filter(
+        user=request.user,
+        status='returned'
+    )
+    return render(request, 'library_app/reading_history.html', {
+        'history': history
+    })
+
+def read_books(request):
+    read_books = Order.objects.filter(
+        user=request.user,
+        status='accepted'
+    )
+    return render(request, 'library_app/read_books.html', {
+        'read_books': read_books
+    })
+
+
+from django.shortcuts import redirect
+from django.contrib import messages
+import requests
+from django.urls import reverse
+
+def add_review(request, book_id):
+    if request.method == "POST":
+        rating = request.POST.get("rating")
+        comment = request.POST.get("comment", "")
+
+        # Call the API
+        api_url = request.build_absolute_uri(reverse("add_review_api", args=[book_id]))
+        headers = {"Authorization": f"Token {request.user.auth_token.key}"}  # if using token auth
+        data = {"rating": rating, "comment": comment}
+
+        import requests
+        response = requests.post(api_url, data=data, headers=headers)
+
+        if response.status_code == 200:
+            messages.success(request, "Review added successfully!")
+        else:
+            messages.error(request, response.json().get("error", "Something went wrong"))
+
+        return redirect("reading_history")
+
+    return redirect("read_books")
+
 
 
 @login_required
@@ -396,17 +443,19 @@ def user_books_view(request):
     return render(request, "library_app/user_books.html", {
         "books": response.data
     })
+
 @login_required
 def user_note_view(request):
-    # Example: fetch user notes from API
     factory = APIRequestFactory()
-    api_request = factory.get("/user/notes/")
+    api_request = factory.get("/user/read-books/")
     api_request.user = request.user
 
-    response = user_feedback(api_request)  # assuming notes use feedback API
+    response = user_read_books(api_request)
+
     return render(request, "library_app/user_note.html", {
-        "notes": response.data
+        "read_books": response.data
     })
+
 
 @login_required
 def user_profile(request):
@@ -554,3 +603,21 @@ def change_password_view(request):
 
     return render(request, "library_app/change_password.html", {"form": form})
 
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import Order
+
+def admin_accept_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'accepted'
+    order.save()
+    messages.success(request, f"Order #{order.id} accepted!")
+    return redirect('admin_orders')
+
+def admin_refuse_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'refused'
+    order.save()
+    messages.error(request, f"Order #{order.id} refused.")
+    return redirect('admin_orders')

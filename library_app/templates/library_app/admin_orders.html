@@ -1,18 +1,43 @@
 {% extends 'library_app/base_admin.html' %}
+
 {% block content %}
 <h2>Orders</h2>
 <table>
-<tr><th>User</th><th>Book</th><th>Quantity</th><th>Date Borrowed</th><th>Date Returned</th></tr>
+<tr>
+    <th>User</th>
+    <th>Book</th>
+    <th>Quantity</th>
+    <th>Date Borrowed</th>
+    <th>Date Returned</th>
+    <th>Actions</th> <!-- New column for buttons -->
+</tr>
+
 {% for order in orders %}
 <tr>
-<td>{{ order.user.username }}</td>
-<td>{{ order.book.title }}</td>
-<td>{{ order.quantity }}</td>
-<td>{{ order.date_rent }}</td>
-<td>{{ order.date_return|default:"Not returned" }}</td>
+    <td>{{ order.user.username }}</td>
+    <td>{{ order.book.title }}</td>
+    <td>{{ order.quantity }}</td>
+    <td>{{ order.date_rent }}</td>
+    <td>{{ order.date_return|default:"Not returned" }}</td>
+    <td>
+    {% if order.status == 'pending' %}
+        <form action="{% url 'admin_accept_order' order.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Accept</button>
+        </form>
+
+        <form action="{% url 'admin_refuse_order' order.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Refuse</button>
+        </form>
+    {% else %}
+        {{ order.status|title }}
+    {% endif %}
+</td>
+
 </tr>
 {% empty %}
-<tr><td colspan="5">No orders yet</td></tr>
+<tr><td colspan="6">No orders yet</td></tr>
 {% endfor %}
 </table>
 {% endblock %}

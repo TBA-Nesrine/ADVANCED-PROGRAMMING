@@ -1,0 +1,31 @@
+{% extends 'library_app/base_user.html' %}
+{% block title %}Read Books | PageTurn Library{% endblock %}
+
+{% block content %}
+<h2>Books You Read</h2>
+<table>
+<tr>
+    <th>Book</th>
+    <th>Quantity</th>
+    <th>Date Borrowed</th>
+    <th>Date Returned</th>
+    <th>Actions</th>
+</tr>
+{% for order in read_books %}
+<tr>
+    <td>{{ order.book.title }}</td>
+    <td>{{ order.quantity }}</td>
+    <td>{{ order.date_rent }}</td>
+    <td>{{ order.date_return }}</td>
+    <td>
+        {% if not order.date_return %}
+            <a href="{% url 'return_book' order.id %}" class="btn btn-warning">Return</a>
+        {% endif %}
+        <a href="{% url 'add_review' order.book.id %}" class="btn btn-info">Review</a>
+    </td>
+</tr>
+{% empty %}
+<tr><td colspan="5">You haven't read any books yet</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

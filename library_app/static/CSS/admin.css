@@ -366,6 +366,42 @@ p[style*="color:red"] {
     margin-bottom: 1.5rem;
 }
 
+/* Accept & Refuse Buttons */
+.btn-succes {
+    padding: 0.5rem 1rem;
+    background-color: #28a745; /* Green */
+    color: #ffffff;
+    border: none;
+    border-radius: var(--admin-radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-succes:hover {
+    background-color: #218838; /* Darker green on hover */
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    padding: 0.5rem 1rem;
+    background-color: #dc3545; /* Red */
+    color: #ffffff;
+    border: none;
+    border-radius: var(--admin-radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #c82333; /* Darker red on hover */
+    transform: translateY(-1px);
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {

@@ -2,9 +2,14 @@ from django.urls import path
 from .auth import signup_api, login_api
 from .admin import *
 from .user import *
+from django.urls import path
+from . import views
 
 
 urlpatterns = [
+    path('review/<int:book_id>/', views.add_review_api, name='add_review_api'),
+
+
     #auth
     path('auth/signup/', signup_api),
     path('auth/login/', login_api),

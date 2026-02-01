@@ -11,10 +11,10 @@
 <td>{{ order.quantity }}</td>
 <td>{{ order.date_rent }}</td>
 <td>
-<form method="POST" action="{% url 'user_return_book' %}">
-{% csrf_token %}
-<input type="hidden" name="order_id" value="{{ order.id }}">
-<button>Return</button>
+<form method="POST" action="{% url 'user_cancel_order' %}">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" value="{{ order.id }}">
+    <button>Cancel</button>
 </form>
 </td>
 </tr>

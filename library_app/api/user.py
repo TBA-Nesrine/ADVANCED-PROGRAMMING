@@ -20,21 +20,42 @@ def user_books(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def user_borrow_book(request):
     book = Book.objects.get(id=request.data['book_id'])
+
     if book.quantity <= 0:
-        return Response({"error": "not available"}, status=400)
+        return Response({"error": "Book not available"}, status=400)
 
-    Order.objects.create(user=request.user, book=book, quantity=1)
-    book.quantity -= 1
-    book.save()
+    Order.objects.create(
+        user=request.user,
+        book=book,
+        quantity=1,
+        status='waiting'
+    )
 
-    return Response({"message": "book borrowed"})
+    return Response({"message": "Order sent, waiting for admin approval"})
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def user_mybag(request):
-    orders = Order.objects.filter(user=request.user, date_return__isnull=True)
+    orders = Order.objects.filter(
+        user=request.user,
+        status='waiting'
+    )
     return Response(OrderSerializer(orders, many=True).data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def user_cancel_order(request):
+    order = Order.objects.get(
+        id=request.data['order_id'],
+        user=request.user,
+        status='waiting'
+    )
+    order.delete()
+    return Response({"message": "Order cancelled"})
+
 
 @api_view(['POST'])
 def user_return_book(request):
@@ -47,6 +68,16 @@ def user_return_book(request):
     book.save()
 
     return Response({"message": "returned"})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_read_books(request):
+    orders = Order.objects.filter(
+        user=request.user,
+        status='accepted'
+    )
+    return Response(OrderSerializer(orders, many=True).data)
+
 
 @api_view(['POST'])
 def user_feedback(request):

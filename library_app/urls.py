@@ -43,6 +43,9 @@ urlpatterns = [
     # 🔥 FIXED → USING ID
     path('dashboard/users/activate/<int:user_id>/', views.activate_user_view, name='activate_user'),
     path('dashboard/users/deactivate/<int:user_id>/', views.deactivate_user_view, name='deactivate_user'),
+    # Admin order actions
+path('dashboard/orders/accept/<int:order_id>/', views.admin_accept_order, name='admin_accept_order'),
+path('dashboard/orders/refuse/<int:order_id>/', views.admin_refuse_order, name='admin_refuse_order'),
 
     # =====================
     # USER
@@ -58,6 +61,14 @@ urlpatterns = [
     path('user/profile/', views.user_profile_view, name='user_profile'),
     path('user/profile/edit/', views.edit_profile_view, name='edit_profile'),
     path('user/change-password/', views.change_password_view, name='change_password'),
+
+    path("user/cancel/", views.cancel_order, name="user_cancel_order"),
+
+     path('read-books/', views.read_books, name='read_books'),
+    path('return/<int:order_id>/', views.return_book, name='return_book'),
+    path('review/<int:book_id>/', views.add_review, name='add_review'),
+    path('history/', views.reading_history, name='reading_history'),
+
 ]
 
 if settings.DEBUG:

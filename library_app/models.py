@@ -20,16 +20,22 @@ class Book(models.Model):
         return self.title
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('waiting', 'Waiting for Admin'),
+        ('accepted', 'Accepted'),
+        ('returned', 'Returned'),
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
     date_rent = models.DateTimeField(auto_now_add=True)
     date_return = models.DateTimeField(blank=True, null=True)
-    quantity = models.PositiveIntegerField(default=1)
-    confirmed = models.BooleanField(default=False)
-
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='waiting')
 
     def __str__(self):
-        return f"{self.user.username} -> {self.book.title}"
+        return f"{self.user.username} -> {self.book.title} ({self.status})"
+
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

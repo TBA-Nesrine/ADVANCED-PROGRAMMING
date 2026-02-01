@@ -10,6 +10,10 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from ..serializers import BookSerializer
 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+
+
 @api_view(['GET'])
 def admin_dashboard(request):
     books = Book.objects.annotate(read_count=Count('order')).order_by('-read_count')[:5]
@@ -37,9 +41,30 @@ def admin_update_book(request, book_id):
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAdminUser])
 def admin_orders(request):
-    orders = Order.objects.select_related('user', 'book')
+    orders = Order.objects.filter(status='waiting').select_related('user', 'book')
     return Response(OrderSerializer(orders, many=True).data)
+
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
+def admin_accept_order(request, order_id):
+    order = Order.objects.get(id=order_id, status='waiting')
+    book = order.book
+
+    if book.quantity < order.quantity:
+        return Response({"error": "Not enough stock"}, status=400)
+
+    # 🔥 decrease quantity ONLY NOW
+    book.quantity -= order.quantity
+    book.save()
+
+    order.status = 'accepted'
+    order.save()
+
+    return Response({"message": "Order accepted"})
+
+
 
 @api_view(['PATCH'])
 def confirm_order(request, order_id):
