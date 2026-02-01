@@ -265,6 +265,78 @@ def deactivate_user_view(request, user_id):
     return redirect("admin_users")
 
 
+
+
+from rest_framework.test import APIRequestFactory
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User
+
+@login_required
+def admin_update_user_view(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        user.username = request.POST.get("username")
+        user.email = request.POST.get("email")
+        user.is_active = request.POST.get("is_active") == "on"
+        user.save()
+
+        return redirect("admin_users")
+
+    return render(request, "library_app/admin_edit_user.html", {
+        "user": user
+    })
+
+
+
+@login_required
+def admin_delete_user_view(request, user_id):
+    factory = APIRequestFactory()
+    api_request = factory.delete(f"/admin/users/delete/{user_id}/")
+    api_request.user = request.user
+
+    admin_delete_user(api_request, user_id)
+
+    return redirect("admin_users")
+
+
+
+@login_required
+def admin_update_book_view(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+
+    if request.method == "POST":
+        factory = APIRequestFactory()
+
+        api_request = factory.patch(
+            f"/admin/books/update/{book_id}/",
+            data={
+                "title": request.POST.get("title"),
+                "author": request.POST.get("author"),
+                "quantity": request.POST.get("quantity"),
+                "description": request.POST.get("description"),
+                "genres": request.POST.getlist("genres"),
+            },
+            format="multipart"
+        )
+
+        if request.FILES.get("image"):
+            api_request.FILES["image"] = request.FILES.get("image")
+
+        api_request.user = request.user
+
+        admin_update_book(api_request, book_id)
+
+        return redirect("admin_books")
+
+    return render(request, "library_app/admin_edit_book.html", {
+        "book": book,
+        "genres": Genre.objects.all()
+    })
+
+
+
 # =========================
 # USER VIEWS
 # =========================

@@ -6,8 +6,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-
-
 urlpatterns = [
 
     # =====================
@@ -31,43 +29,54 @@ urlpatterns = [
     # ADMIN DASHBOARD
     # =====================
     path('dashboard/home/', views.admin_home, name='admin_home'),
+
+    # -------- BOOKS --------
     path('dashboard/books/', views.admin_books, name='admin_books'),
     path('dashboard/books/add/', views.admin_add_book_view, name='admin_add_book'),
+    path('dashboard/books/edit/<int:book_id>/', views.admin_update_book_view, name='admin_edit_book'),
+    path('dashboard/books/update/<int:book_id>/', views.admin_update_book_view, name='admin_update_book'),
     path('dashboard/books/delete/<int:book_id>/', views.admin_delete_book_view, name='admin_delete_book'),
-    path('dashboard/orders/', views.admin_orders_view, name='admin_orders'),
-    path('dashboard/reviews/', views.admin_reviews_view, name='admin_reviews'),
 
+    # -------- USERS --------
     path('dashboard/users/', views.admin_users_view, name='admin_users'),
     path('dashboard/users/add/', views.admin_add_user_view, name='admin_add_user'),
+    path('dashboard/users/edit/<int:user_id>/', views.admin_update_user_view, name='admin_edit_user'),
+    path('dashboard/users/delete/<int:user_id>/', views.admin_delete_user_view, name='admin_delete_user'),
 
-    # 🔥 FIXED → USING ID
+    # Activate / Deactivate users (USING ID)
     path('dashboard/users/activate/<int:user_id>/', views.activate_user_view, name='activate_user'),
     path('dashboard/users/deactivate/<int:user_id>/', views.deactivate_user_view, name='deactivate_user'),
-    # Admin order actions
-path('dashboard/orders/accept/<int:order_id>/', views.admin_accept_order, name='admin_accept_order'),
-path('dashboard/orders/refuse/<int:order_id>/', views.admin_refuse_order, name='admin_refuse_order'),
+    path('dashboard/users/update/<int:user_id>/', views.admin_update_user_view, name='admin_update_user'),
+    # -------- ORDERS --------
+    path('dashboard/orders/', views.admin_orders_view, name='admin_orders'),
+    path('dashboard/orders/accept/<int:order_id>/', views.admin_accept_order, name='admin_accept_order'),
+    path('dashboard/orders/refuse/<int:order_id>/', views.admin_refuse_order, name='admin_refuse_order'),
+
+    # -------- REVIEWS --------
+    path('dashboard/reviews/', views.admin_reviews_view, name='admin_reviews'),
 
     # =====================
-    # USER
+    # USER SIDE
     # =====================
     path('user/home/', views.user_home, name='user_home'),
-path('user/books/', views.user_books_view, name='user_books'),
-path('user/borrow/', views.borrow_book, name='user_borrow_book'),
-path('user/mybag/', views.user_mybag_view, name='user_mybag'),
-path('user/notes/', views.user_note_view, name='user_note'),
-path('user/contact/', views.user_contactus, name='user_contactus'),
-path('user/settings/', views.user_settings, name='user_settings'),
-path('user/profile/', views.user_profile_view, name='user_profile'),
-path('user/profile/edit/', views.edit_profile_view, name='edit_profile'),
-path('user/change-password/', views.change_password_view, name='change_password'),
-path('user/cancel/', views.cancel_order, name='user_cancel_order'),
+    path('user/books/', views.user_books_view, name='user_books'),
+    path('user/borrow/', views.borrow_book, name='user_borrow_book'),
+    path('user/mybag/', views.user_mybag_view, name='user_mybag'),
+    path('user/notes/', views.user_note_view, name='user_note'),
+    path('user/contact/', views.user_contactus, name='user_contactus'),
+    path('user/settings/', views.user_settings, name='user_settings'),
+    path('user/profile/', views.user_profile_view, name='user_profile'),
+    path('user/profile/edit/', views.edit_profile_view, name='edit_profile'),
+    path('user/change-password/', views.change_password_view, name='change_password'),
+    path('user/cancel/', views.cancel_order, name='user_cancel_order'),
 
-# Read / return / review routes
-path('user/read-books/', views.read_books, name='read_books'),
-path('user/history/', views.reading_history, name='reading_history'),
-path('user/return/<int:order_id>/', views.return_book, name='return_book'),
-path('user/review/<int:book_id>/', views.add_review, name='add_review'),
+    # -------- USER ACTIONS --------
+    path('user/read-books/', views.read_books, name='read_books'),
+    path('user/history/', views.reading_history, name='reading_history'),
+    path('user/return/<int:order_id>/', views.return_book, name='return_book'),
+    path('user/review/<int:book_id>/', views.add_review, name='add_review'),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(

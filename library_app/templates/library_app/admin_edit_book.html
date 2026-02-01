@@ -1,0 +1,101 @@
+{% extends 'library_app/base_admin.html' %}
+{% block content %}
+
+<style>
+/* Page title */
+.page-title {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #7b3f3f;
+}
+
+/* Form styling */
+.edit-form {
+    max-width: 600px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+.edit-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #444;
+}
+
+.edit-form input[type="text"],
+.edit-form input[type="number"],
+.edit-form textarea,
+.edit-form select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.edit-form textarea {
+    resize: vertical;
+}
+
+.edit-form select[multiple] {
+    height: 120px;
+}
+
+.edit-form input[type="file"] {
+    margin-bottom: 16px;
+}
+
+/* Submit button */
+.submit-btn {
+    background: #7b3f3f;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.submit-btn:hover {
+    background: #632f2f;
+}
+</style>
+
+<h2 class="page-title">Edit Book</h2>
+
+<form method="POST" action="" enctype="multipart/form-data" class="edit-form">
+    {% csrf_token %}
+
+    <label for="title">Title</label>
+    <input type="text" name="title" id="title" value="{{ book.title }}" required>
+
+    <label for="author">Author</label>
+    <input type="text" name="author" id="author" value="{{ book.author }}" required>
+
+    <label for="quantity">Quantity</label>
+    <input type="number" name="quantity" id="quantity" value="{{ book.quantity }}" min="0" required>
+
+    <label for="description">Description</label>
+    <textarea name="description" id="description" rows="4">{{ book.description }}</textarea>
+
+    <label for="genres">Genres</label>
+    <select name="genres" id="genres" multiple>
+        {% for genre in genres %}
+            <option value="{{ genre.id }}"
+                {% if genre in book.genres.all %}selected{% endif %}>
+                {{ genre.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label for="image">Book Image</label>
+    <input type="file" name="image" id="image">
+
+    <button type="submit" class="submit-btn">Save Changes</button>
+</form>
+
+{% endblock %}

@@ -15,9 +15,8 @@
     </button>
 </form>
 
-<!-- Add New User button just above the table, left-aligned -->
-<a href="{% url 'admin_add_user' %}" style="display:inline-block; margin-bottom:10px;">
-    <button style="background:#854049; color:white; padding:8px 16px; border:none; border-radius:20px;">
+<a href="{% url 'admin_add_user' %}" style="display:inline-block; margin-bottom:12px;">
+    <button style="background:#854049; color:white; padding:8px 18px; border:none; border-radius:20px;">
         Add New User
     </button>
 </a>
@@ -29,7 +28,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>Status</th>
-            <th>Actions</th>
+            <th style="width:170px;">Actions</th>
         </tr>
     </thead>
 
@@ -47,26 +46,45 @@
                 {% endif %}
             </td>
 
-            <td style="display:flex; gap:10px;">
-                {% if u.reference_id %}
-                    {% if u.active %}
-                        <form method="POST" action="{% url 'deactivate_user' u.reference_id %}">
-                            {% csrf_token %}
-                            <button style="background:#999; color:white; border:none; padding:5px 10px; border-radius:6px;">
-                                Deactivate
-                            </button>
-                        </form>
-                    {% else %}
-                        <form method="POST" action="{% url 'activate_user' u.reference_id %}">
-                            {% csrf_token %}
-                            <button style="background:#854049; color:white; border:none; padding:5px 10px; border-radius:6px;">
-                                Activate
-                            </button>
-                        </form>
+            <td>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+
+                    <!-- EDIT -->
+                    <a href="{% url 'admin_edit_user' u.user.id %}" style="text-decoration:none;">
+                        <button class="action-btn">
+                            Edit
+                        </button>
+                    </a>
+
+                    <!-- DELETE -->
+                    <form method="POST" action="{% url 'admin_delete_user' u.user.id %}" style="margin:0;" class="table-form">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn"
+                            onclick="return confirm('Are you sure you want to delete this user?');">
+                            Delete
+                        </button>
+                    </form>
+
+                    <!-- ACTIVATE / DEACTIVATE -->
+                    {% if u.reference_id %}
+                        {% if u.active %}
+                            <form method="POST" action="{% url 'deactivate_user' u.reference_id %}" style="margin:0;" class="table-form">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn">
+                                    Deactivate
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{% url 'activate_user' u.reference_id %}" style="margin:0;" class="table-form">
+                                {% csrf_token %}
+                                <button type="submit" class="action-btn">
+                                    Activate
+                                </button>
+                            </form>
+                        {% endif %}
                     {% endif %}
-                {% else %}
-                    <span style="color:red;">No reference ID</span>
-                {% endif %}
+
+                </div>
             </td>
         </tr>
     {% empty %}

@@ -55,7 +55,7 @@ def admin_accept_order(request, order_id):
     if book.quantity < order.quantity:
         return Response({"error": "Not enough stock"}, status=400)
 
-    # 🔥 decrease quantity ONLY NOW
+    # decrease quantity ONLY NOW
     book.quantity -= order.quantity
     book.save()
 
@@ -134,3 +134,18 @@ def admin_add_user(request):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data, status=201)
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from library_app.models import UserProfile
+
+@api_view(['DELETE'])
+def admin_delete_user(request, user_id):
+    user = User.objects.get(id=user_id)
+
+    # delete related profile if exists
+    UserProfile.objects.filter(user=user).delete()
+
+    user.delete()
+    return Response({"message": "User deleted successfully"})

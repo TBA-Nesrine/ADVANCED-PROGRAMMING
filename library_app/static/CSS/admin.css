@@ -258,7 +258,8 @@ span[style*="color:red"] {
 }
 
 /* Forms */
-form[method="POST"] {
+/* POST forms ONLY for real pages (not table actions) */
+form[method="POST"]:not(.table-form) {
     background: var(--admin-white);
     padding: 2rem;
     border-radius: var(--admin-radius);
@@ -266,6 +267,35 @@ form[method="POST"] {
     max-width: 600px;
     margin: 0 auto;
 }
+
+/* Inline table forms (Delete / Activate / etc) */
+.table-form {
+    background: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    max-width: none !important;
+    margin: 0 !important;
+    display: inline;
+}
+
+/* Unified admin action button */
+.action-btn {
+    width: 100%;
+    padding: 0.6rem 0;
+    background: var(--admin-primary); /* Changed from #6b8e95 to match your theme */
+    color: white;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.25s ease;
+}
+
+.action-btn:hover {
+    background: var(--admin-primary-dark);
+}
+
 
 form[method="POST"] input,
 form[method="POST"] textarea,
@@ -456,4 +486,10 @@ p[style*="color:red"] {
         padding: 0.75rem;
         font-size: 0.85rem;
     }
+
+
+
+
+
+
 }

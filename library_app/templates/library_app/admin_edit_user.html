@@ -1,0 +1,45 @@
+{% extends "library_app/base_admin.html" %}
+{% block content %}
+
+<h2 style="color:#4A4A4A; margin-bottom:10px;">Edit User</h2>
+
+<form method="POST" action="{% url 'admin_update_user' user.id %}" style="max-width:500px;">
+    {% csrf_token %}
+
+    <!-- Username -->
+    <label for="username" style="display:block; margin-bottom:6px; font-weight:bold;">Username</label>
+    <input type="text"
+           name="username"
+           id="username"
+           value="{{ user.username }}"
+           style="padding:8px; width:100%; border-radius:6px; margin-bottom:12px;">
+
+    <!-- Email -->
+    <label for="email" style="display:block; margin-bottom:6px; font-weight:bold;">Email</label>
+    <input type="email"
+           name="email"
+           id="email"
+           value="{{ user.email }}"
+           style="padding:8px; width:100%; border-radius:6px; margin-bottom:12px;">
+
+    <!-- Active Status -->
+    <label for="active" style="display:block; margin-bottom:6px; font-weight:bold;">Status</label>
+    <select name="active" id="active" style="padding:8px; width:100%; border-radius:6px; margin-bottom:12px;">
+        <option value="True" {% if user.active %}selected{% endif %}>Active</option>
+        <option value="False" {% if not user.active %}selected{% endif %}>Inactive</option>
+    </select>
+
+    <div style="display:flex; gap:10px;">
+        <button type="submit" style="flex:1; background:#854049; color:white; padding:10px; border:none; border-radius:20px;">
+            Save Changes
+        </button>
+
+        <a href="{% url 'admin_users' %}" style="flex:1; text-align:center; text-decoration:none;">
+            <button type="button" style="width:100%; background:#6b8e95; color:white; padding:10px; border:none; border-radius:20px;">
+                Cancel
+            </button>
+        </a>
+    </div>
+</form>
+
+{% endblock %}

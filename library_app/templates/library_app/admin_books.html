@@ -75,19 +75,54 @@ tr:not(:last-child) td {
     border-bottom: 1px solid #eee;
 }
 
-/* Delete button - SAME SIZE AS SEARCH BUTTON */
-.delete-btn {
-    background: #8b4a4a;
+/* Unified action button style */
+.action-btn {
+    display: inline-block;
+    text-align: center;
+    background: #854049;
     color: white;
     border: none;
-    padding: 10px 18px;     /* same as search button */
-    border-radius: 8px;     /* same as search button */
+    padding: 10px 0;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 14px;        /* default button text size */
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.delete-btn:hover {
-    background: #6e3838;
+.action-btn:hover {
+    background: #6b3038;
+    transform: translateY(-1px);
+}
+
+/* Make sure form buttons use the same style */
+form {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+form button.action-btn {
+    width: 100%;
+    padding: 10px 0;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+/* Action buttons container */
+.actions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 170px;
+}
+
+/* For the action cells */
+td:last-child {
+    width: 170px;
 }
 </style>
 
@@ -105,7 +140,7 @@ tr:not(:last-child) td {
     <th>Title</th>
     <th>Author</th>
     <th>Quantity</th>
-    <th>Actions</th>
+    <th style="width: 170px;">Actions</th>
 </tr>
 
 {% for book in books %}
@@ -114,10 +149,20 @@ tr:not(:last-child) td {
     <td>{{ book.author }}</td>
     <td>{{ book.quantity }}</td>
     <td>
-        <form method="POST" action="{% url 'admin_delete_book' book.id %}">
-            {% csrf_token %}
-            <button type="submit" class="delete-btn">Delete</button>
-        </form>
+        <div class="actions-container">
+            <!-- Edit button -->
+            <a href="{% url 'admin_update_book' book.id %}" class="action-btn">
+                Edit
+            </a>
+
+            <!-- Delete button -->
+            <form method="POST" action="{% url 'admin_delete_book' book.id %}">
+                {% csrf_token %}
+                <button type="submit" class="action-btn" onclick="return confirm('Are you sure you want to delete this book?');">
+                    Delete
+                </button>
+            </form>
+        </div>
     </td>
 </tr>
 {% empty %}
