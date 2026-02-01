@@ -367,7 +367,7 @@ p[style*="color:red"] {
 }
 
 /* Accept & Refuse Buttons */
-.btn-succes {
+.btn-accept {
     padding: 0.5rem 1rem;
     background-color: #28a745; /* Green */
     color: #ffffff;
@@ -379,12 +379,12 @@ p[style*="color:red"] {
     transition: all 0.3s ease;
 }
 
-.btn-succes:hover {
+.btn-accept:hover {
     background-color: #218838; /* Darker green on hover */
     transform: translateY(-1px);
 }
 
-.btn-danger {
+.btn-refuse {
     padding: 0.5rem 1rem;
     background-color: #dc3545; /* Red */
     color: #ffffff;
@@ -396,7 +396,7 @@ p[style*="color:red"] {
     transition: all 0.3s ease;
 }
 
-.btn-danger:hover {
+.btn-refuse:hover {
     background-color: #c82333; /* Darker red on hover */
     transform: translateY(-1px);
 }

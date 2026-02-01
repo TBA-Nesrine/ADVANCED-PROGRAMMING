@@ -141,3 +141,49 @@ def change_password(request):
         return Response({"message": "Password changed successfully"})
     else:
         return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# api/users.py
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from library_app.models import Book, Review
+from django.db.models import Avg
+
+def add_review_for_user(user, book_id, rating, comment=""):
+    """
+    Adds a review for a book by a user.
+    Returns a dict with 'success' and 'review' or 'error'.
+    """
+    try:
+        book = Book.objects.get(id=book_id)
+    except Book.DoesNotExist:
+        return {"success": False, "error": "Book not found"}
+
+    try:
+        rating = int(rating)
+    except (ValueError, TypeError):
+        return {"success": False, "error": "Rating must be a number"}
+
+    review = Review.objects.create(
+        book=book,
+        user=user,
+        rating=rating,
+        comment=comment
+    )
+
+     # Update book's average rating
+    avg_rating = Review.objects.filter(book=book).aggregate(Avg('rating'))['rating__avg']
+    book.reviews = round(avg_rating, 1)  # keep 1 decimal place
+    book.save()
+
+    return {
+        "success": True,
+        "review": {
+            "id": review.id,
+            "book": book.title,
+            "rating": review.rating,
+            "comment": review.comment,
+            "user": user.username
+        }
+    }

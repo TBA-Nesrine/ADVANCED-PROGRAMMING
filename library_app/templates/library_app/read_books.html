@@ -18,11 +18,14 @@
     <td>{{ order.date_rent }}</td>
     <td>{{ order.date_return }}</td>
     <td>
-        {% if not order.date_return %}
-            <a href="{% url 'return_book' order.id %}" class="btn btn-warning">Return</a>
-        {% endif %}
-        <a href="{% url 'add_review' order.book.id %}" class="btn btn-info">Review</a>
-    </td>
+    {% if not order.date_return %}
+        <form method="POST" action="{% url 'return_book' order.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button class="btn btn-warning">Return</button>
+        </form>
+    {% endif %}
+    <a href="{% url 'add_review' order.book.id %}" class="btn btn-info">Review</a>
+</td>
 </tr>
 {% empty %}
 <tr><td colspan="5">You haven't read any books yet</td></tr>

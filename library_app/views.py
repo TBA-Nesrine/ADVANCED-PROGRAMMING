@@ -355,66 +355,65 @@ def cancel_order(request):
 
 
 
-@csrf_exempt
+from django.utils import timezone
+
 @login_required
-def return_book(request):
-    if request.method == "POST":
-        factory = APIRequestFactory()
-        api_request = factory.post("/user/return/", {
-            "order_id": request.POST.get("order_id")
-        })
-        api_request.user = request.user
+def return_book(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
 
-        user_return_book(api_request)
+    if order.status == 'accepted' and order.date_return is None:
+        order.status = 'returned'
+        order.date_return = timezone.now()
+        order.save()
+        messages.success(request, f"You returned '{order.book.title}' successfully!")
+    else:
+        messages.error(request, "This book cannot be returned.")
 
-    return redirect("user_note")
+    return redirect("read_books")
+
 
 @login_required
 def reading_history(request):
-    history = Order.objects.filter(
-        user=request.user,
-        status='returned'
-    )
+    orders = Order.objects.filter(user=request.user, status='returned', date_return__isnull=False)
     return render(request, 'library_app/reading_history.html', {
-        'history': history
+        'returned_books': orders
     })
 
+@login_required
 def read_books(request):
-    read_books = Order.objects.filter(
-        user=request.user,
-        status='accepted'
-    )
+    orders = Order.objects.filter(user=request.user, status='accepted', date_return__isnull=True)
     return render(request, 'library_app/read_books.html', {
-        'read_books': read_books
+        'read_books': orders
     })
 
 
-from django.shortcuts import redirect
-from django.contrib import messages
-import requests
-from django.urls import reverse
 
+# library_app/views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from library_app.models import Book
+from .api.user import add_review_for_user  # <-- import the function
+
+@login_required
 def add_review(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+
     if request.method == "POST":
         rating = request.POST.get("rating")
         comment = request.POST.get("comment", "")
 
-        # Call the API
-        api_url = request.build_absolute_uri(reverse("add_review_api", args=[book_id]))
-        headers = {"Authorization": f"Token {request.user.auth_token.key}"}  # if using token auth
-        data = {"rating": rating, "comment": comment}
+        # Call the function directly
+        result = add_review_for_user(request.user, book_id, rating, comment)
 
-        import requests
-        response = requests.post(api_url, data=data, headers=headers)
-
-        if response.status_code == 200:
+        if result["success"]:
             messages.success(request, "Review added successfully!")
+            return redirect("reading_history")
         else:
-            messages.error(request, response.json().get("error", "Something went wrong"))
+            messages.error(request, result.get("error", "Something went wrong"))
 
-        return redirect("reading_history")
+    return render(request, "library_app/add_review.html", {"book": book})
 
-    return redirect("read_books")
 
 
 

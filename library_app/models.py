@@ -24,6 +24,7 @@ class Order(models.Model):
         ('waiting', 'Waiting for Admin'),
         ('accepted', 'Accepted'),
         ('returned', 'Returned'),
+        ('refused', 'Refused'),
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -40,7 +41,8 @@ class Order(models.Model):
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE, null=True, blank=True)
-    feedback = models.TextField()
+    rating = models.PositiveSmallIntegerField(default = 5)  # 1 to 5
+    comment = models.TextField(blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

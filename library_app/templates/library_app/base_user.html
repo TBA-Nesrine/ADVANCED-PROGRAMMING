@@ -54,6 +54,10 @@
     <span>My Bag</span>
     <span class="badge" id="bagCount">{{ bag_count|default:"0" }}</span>
 </a>
+<a href="{% url 'read_books' %}" class="nav-link {% if 'read-books' in request.path %}active{% endif %}">
+    <i class="fas fa-book-reader"></i>
+    <span>Read Books</span>
+</a>
 <a href="{% url 'user_contactus' %}" class="nav-link {% if 'user_contactus' in request.path %}active{% endif %}">
     <i class="fas fa-envelope"></i>
     <span>Contact</span>
