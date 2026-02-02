@@ -28,18 +28,17 @@
 </div>
 
 <div class="books">
-    {% for book in books %}
+{% for book in books %}
+
+    <!-- 🔗 CLICKABLE BOOK CARD -->
+    <a href="{% url 'user_book_detail' book.id %}" class="card-link">
+
         <div class="card">
 
-            <!-- 📘 Book Cover -->
             {% if book.image %}
-                <img src="{{ book.image }}"
-                     alt="{{ book.title }} cover"
-                     class="book-cover">
+                <img src="{{ book.image }}" class="book-cover" alt="{{ book.title }}">
             {% else %}
-                <img src="/static/images/default-book.png"
-                     alt="No cover"
-                     class="book-cover">
+                <img src="/static/images/default-book.png" class="book-cover" alt="No cover">
             {% endif %}
 
             <h3>{{ book.title }}</h3>
@@ -50,16 +49,19 @@
                 <form method="POST" action="{% url 'user_borrow_book' %}">
                     {% csrf_token %}
                     <input type="hidden" name="book_id" value="{{ book.id }}">
-                    <button>Borrow</button>
+                    <button type="submit">Borrow</button>
                 </form>
             {% else %}
                 <p>❌ Not available</p>
             {% endif %}
 
         </div>
-    {% empty %}
-        <p>No books available.</p>
-    {% endfor %}
+
+    </a>
+
+{% empty %}
+    <p>No books available.</p>
+{% endfor %}
 </div>
 
 {% endblock %}

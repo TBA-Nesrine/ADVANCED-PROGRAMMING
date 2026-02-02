@@ -178,14 +178,28 @@ def admin_orders_view(request):
 
 @login_required
 def admin_reviews_view(request):
-    factory = APIRequestFactory()
-    api_request = factory.get("/admin/reviews/")
-    api_request.user = request.user
+    reviews = Review.objects.select_related("user", "book").all()
 
-    response = admin_reviews(api_request)
     return render(request, "library_app/admin_reviews.html", {
-        "reviews": response.data
+        "reviews": reviews
     })
+
+@login_required
+def admin_delete_review_view(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+
+    book = review.book
+    review.delete()
+
+    # Recalculate book rating
+    if book:
+        from django.db.models import Avg
+        avg = Review.objects.filter(book=book).aggregate(Avg("rating"))["rating__avg"]
+        book.reviews = round(avg, 1) if avg else None
+        book.save()
+
+    messages.success(request, "Review deleted successfully")
+    return redirect("admin_reviews")
 
 
 @login_required
@@ -489,20 +503,36 @@ def add_review(request, book_id):
 
 
 
-@login_required
+from django.shortcuts import render, redirect
+from rest_framework.test import APIRequestFactory
+
+from library_app.models import Book
+from library_app.api.user import user_send_contact
+
+
 def user_contactus(request):
+    books = Book.objects.all()
+
     if request.method == "POST":
         factory = APIRequestFactory()
-        api_request = factory.post("/user/feedback/", {
-            "book_id": request.POST.get("book_id"),
-            "feedback": request.POST.get("feedback"),
-        })
+        api_request = factory.post(
+            '/api/contact/',
+            data=request.POST
+        )
         api_request.user = request.user
 
-        user_feedback(api_request)
-        return redirect("user_contactus")
+        response = user_send_contact(api_request)
 
-    return render(request, "library_app/user_contactus.html")
+        if response.status_code == 200:
+            return redirect('user_home')
+
+    return render(
+        request,
+        'library_app/user_contactus.html',
+        {'books': books}
+    )
+
+
 
 @login_required
 def user_books_view(request):
@@ -692,3 +722,25 @@ def admin_refuse_order(request, order_id):
     order.save()
     messages.error(request, f"Order #{order.id} refused.")
     return redirect('admin_orders')
+
+
+from rest_framework.test import APIRequestFactory
+from django.contrib.auth.decorators import login_required
+from .api.user import user_book_detail_api
+
+@login_required
+def user_book_detail_view(request, book_id):
+    factory = APIRequestFactory()
+    api_request = factory.get(f"/api/user/book/{book_id}/")
+    api_request.user = request.user
+
+    response = user_book_detail_api(api_request, book_id)
+
+    if response.status_code != 200:
+        return redirect("user_home")
+
+    return render(request, "library_app/book_detail_modal.html", {
+        "book": response.data
+    })
+
+

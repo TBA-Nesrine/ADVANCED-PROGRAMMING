@@ -187,3 +187,52 @@ def add_review_for_user(user, book_id, rating, comment=""):
             "user": user.username
         }
     }
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from ..models import Book
+from ..serializers import BookSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_book_detail_api(request, book_id):
+    try:
+        book = Book.objects.get(id=book_id)
+    except Book.DoesNotExist:
+        return Response({"error": "Book not found"}, status=404)
+
+    serializer = BookSerializer(book)
+    return Response(serializer.data)
+
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from library_app.models import Contact, Book
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def user_send_contact(request):
+
+    message = request.data.get('feedback')
+    book_id = request.data.get('book_id')
+
+    if not message:
+        return Response(
+            {"error": "Message cannot be empty"},
+            status=400
+        )
+
+    book = None
+    if book_id:
+        book = Book.objects.filter(id=book_id).first()
+
+    Contact.objects.create(
+        user=request.user,
+        book=book,
+        message=message
+    )
+
+    return Response({"message": "Message sent successfully"})

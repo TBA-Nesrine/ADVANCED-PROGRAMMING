@@ -1,23 +1,55 @@
 {% extends 'library_app/base_admin.html' %}
 {% block content %}
-<h2>User Reviews / Feedback</h2>
-<table>
-<tr><th>User</th><th>Book</th><th>Feedback</th><th>Date</th></tr>
+
+<h2>User Reviews</h2>
+
+<table border="1" cellpadding="8">
+<tr>
+    <th>Review ID</th>
+    <th>User</th>
+    <th>User ID</th>
+    <th>Book</th>
+    <th>Book ID</th>
+    <th>Rating</th>
+    <th>Comment</th>
+    <th>Date</th>
+    <th>Action</th>
+</tr>
+
 {% for review in reviews %}
 <tr>
-<td>{{ review.user.username }}</td>
-<td>
-  {% if review.book %}
-    {{ review.book.title }}
-  {% else %}
-    General
-  {% endif %}
-</td>
-<td>{{ review.feedback }}</td>
-<td>{{ review.date }}</td>
+    <td>{{ review.id }}</td>
+    <td>{{ review.user.username }}</td>
+    <td>{{ review.user.id }}</td>
+
+    <td>
+        {% if review.book %}
+            {{ review.book.title }}
+        {% else %}
+            General
+        {% endif %}
+    </td>
+
+    <td>{% if review.book %}{{ review.book.id }}{% endif %}</td>
+
+    <td>{{ review.rating }}/5</td>
+    <td>{{ review.comment }}</td>
+    <td>{{ review.date }}</td>
+
+    <td>
+        <form method="POST" action="{% url 'admin_delete_review' review.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">
+                Delete
+            </button>
+        </form>
+    </td>
 </tr>
 {% empty %}
-<tr><td colspan="4">No feedback yet</td></tr>
+<tr>
+    <td colspan="9">No reviews yet</td>
+</tr>
 {% endfor %}
 </table>
-{% endblock %}<!---->
+
+{% endblock %}

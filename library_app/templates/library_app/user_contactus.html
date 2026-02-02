@@ -2,16 +2,29 @@
 {% block title %}Contact Us | PageTurn Library{% endblock %}
 
 {% block content %}
+
 <h2>Contact Us / Feedback</h2>
+
 <form method="POST" action="{% url 'user_contactus' %}">
-{% csrf_token %}
-<select name="book_id">
-<option value="">General</option>
-{% for book in books %}
-<option value="{{ book.id }}">{{ book.title }}</option>
-{% endfor %}
-</select>
-<textarea name="feedback" placeholder="Your feedback..." required></textarea><br>
-<button type="submit">Send</button>
+    {% csrf_token %}
+
+    <label>Related Book (optional)</label>
+    <select name="book_id">
+        <option value="">General</option>
+        {% for book in books %}
+            <option value="{{ book.id }}">{{ book.title }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Your Message</label>
+    <textarea
+        name="feedback"
+        placeholder="Write anything you want to tell us..."
+        required
+        rows="6"
+    ></textarea>
+
+    <button type="submit">Send</button>
 </form>
+
 {% endblock %}

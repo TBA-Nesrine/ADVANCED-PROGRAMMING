@@ -4,9 +4,14 @@ from .admin import *
 from .user import *
 from django.urls import path
 from . import views
+from django.urls import path
+
 
 
 urlpatterns = [
+
+
+
     path('review/<int:book_id>/', views.add_review_api, name='add_review_api'),
 
 

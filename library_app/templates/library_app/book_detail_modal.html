@@ -1,0 +1,42 @@
+{% extends 'library_app/base_user.html' %}
+
+{% block title %}{{ book.title }} | Book Details{% endblock %}
+
+{% block content %}
+
+<div class="modal-overlay">
+    <div class="modal-box">
+
+        <!-- ❌ CLOSE -->
+        <a href="{% url 'user_home' %}" class="close-btn">&times;</a>
+
+        <!-- 📘 BOOK IMAGE -->
+        {% if book.image %}
+            <img src="{{ book.image }}" class="modal-cover">
+        {% else %}
+            <img src="/static/images/default-book.png" class="modal-cover">
+        {% endif %}
+
+        <h2>{{ book.title }}</h2>
+
+        <p><strong>Author:</strong> {{ book.author }}</p>
+        <p><strong>Rating:</strong> ⭐ {{ book.reviews|default:"N/A" }}</p>
+        <p><strong>Available Quantity:</strong> {{ book.quantity }}</p>
+
+        <p><strong>Description:</strong></p>
+        <p>{{ book.description|default:"No description available." }}</p>
+
+        {% if book.quantity > 0 %}
+        <form method="POST" action="{% url 'user_borrow_book' %}">
+            {% csrf_token %}
+            <input type="hidden" name="book_id" value="{{ book.id }}">
+            <button type="submit">Borrow Book</button>
+        </form>
+        {% else %}
+            <p>❌ This book is currently unavailable</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
