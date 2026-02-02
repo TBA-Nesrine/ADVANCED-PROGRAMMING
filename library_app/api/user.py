@@ -191,19 +191,37 @@ def add_review_for_user(user, book_id, rating, comment=""):
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from ..models import Book
-from ..serializers import BookSerializer
+
+from library_app.models import Book, Review
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_book_detail_api(request, book_id):
-    try:
-        book = Book.objects.get(id=book_id)
-    except Book.DoesNotExist:
-        return Response({"error": "Book not found"}, status=404)
+def user_book_details(request, book_id):
 
-    serializer = BookSerializer(book)
-    return Response(serializer.data)
+    book = Book.objects.get(id=book_id)
+
+    reviews = Review.objects.filter(book=book).select_related('user')
+
+    reviews_data = [
+        {
+            "username": review.user.username,
+            "comment": review.comment
+        }
+        for review in reviews
+    ]
+
+    return Response({
+        "book": {
+            "id": book.id,
+            "title": book.title,
+            "author": book.author,
+            "description": book.description,
+            "quantity": book.quantity,
+            "image": book.image.url if book.image else None,
+        },
+        "reviews": reviews_data
+    })
 
 
 from rest_framework.decorators import api_view, permission_classes

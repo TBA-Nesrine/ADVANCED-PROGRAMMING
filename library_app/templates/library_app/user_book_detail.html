@@ -1,0 +1,47 @@
+{% extends 'library_app/base_user.html' %}
+{% block title %}{{ book.title }} | PageTurn Library{% endblock %}
+
+{% block content %}
+
+<div class="book-detail-page">
+
+    <!-- BOOK INFO -->
+    <div class="book-info">
+        {% if book.image %}
+            <img src="{{ book.image }}" class="detail-cover">
+        {% else %}
+            <img src="/static/images/default-book.png" class="detail-cover">
+        {% endif %}
+
+        <div class="book-meta">
+            <h2>{{ book.title }}</h2>
+            <p><strong>Author:</strong> {{ book.author }}</p>
+            <p><strong>Description:</strong></p>
+            <p>{{ book.description|default:"No description available." }}</p>
+            <p><strong>Available:</strong> {{ book.quantity }}</p>
+        </div>
+
+        
+    </div>
+
+    <hr>
+
+    <!-- REVIEWS SECTION -->
+    <div class="reviews-section">
+        <h3>User Reviews</h3>
+
+        {% if reviews %}
+            {% for review in reviews %}
+                <div class="review">
+                    <strong>{{ review.username }}</strong>
+                    <p>{{ review.comment }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No reviews yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

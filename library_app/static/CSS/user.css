@@ -772,6 +772,20 @@ button:hover, .btn:hover {
     margin: 0 auto 15px;
 }
 
+.book-info {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.detail-cover {
+    width: 200px;
+}
+
+.review {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
 
 /* Responsive Design */
 @media (max-width: 1024px) {

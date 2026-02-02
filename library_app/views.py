@@ -724,23 +724,30 @@ def admin_refuse_order(request, order_id):
     return redirect('admin_orders')
 
 
+from django.shortcuts import render
 from rest_framework.test import APIRequestFactory
-from django.contrib.auth.decorators import login_required
-from .api.user import user_book_detail_api
 
-@login_required
+from library_app.api.user import user_book_details
+
+
 def user_book_detail_view(request, book_id):
+
     factory = APIRequestFactory()
-    api_request = factory.get(f"/api/user/book/{book_id}/")
+    api_request = factory.get(f'/api/books/{book_id}/')
     api_request.user = request.user
 
-    response = user_book_detail_api(api_request, book_id)
+    response = user_book_details(api_request, book_id)
 
-    if response.status_code != 200:
-        return redirect("user_home")
+    data = response.data
 
-    return render(request, "library_app/book_detail_modal.html", {
-        "book": response.data
-    })
+    return render(
+        request,
+        'library_app/user_book_detail.html',
+        {
+            'book': data['book'],
+            'reviews': data['reviews']
+        }
+    )
+
 
 
