@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
+from .models import UserProfile
 
 User = get_user_model()
 
@@ -23,3 +24,12 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     print(user.username, "token created" if created else "already exists")
 
 """
+
+# library_app/signals.py
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(
+            user=instance,
+            reference_id=...
+        )

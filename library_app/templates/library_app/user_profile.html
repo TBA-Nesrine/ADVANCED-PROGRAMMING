@@ -2,25 +2,253 @@
 
 {% block content %}
 
-<h2>My Profile</h2>
+<style>
+  :root {
+    --admin-primary: #854049;
+    --admin-primary-dark: #41302C;
+    --admin-secondary: #685C55;
+    --admin-accent: #C2A88E;
+    --admin-light: #f7f4ef;
+    --admin-lighter: #e6ded5;
+    --admin-white: #ffffff;
+    --admin-text: #41302C;
+    --admin-text-light: #685C55;
+    --admin-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
 
-<p><strong>Full Name:</strong>
-{{ profile.first_name }} {{ profile.last_name }}
-</p>
+  body {
+    background-color: var(--admin-light);
+    font-family: system-ui, sans-serif;
+    color: var(--admin-text);
+  }
 
-<p><strong>Username:</strong>
-{{ profile.username }}
-</p>
+  .container {
+    max-width: 960px;
+    margin: 50px auto;
+    padding: 0 20px;
+  }
 
-<p><strong>Email:</strong>
-{{ profile.email }}
-</p>
+  /* ===== Profile Card ===== */
+  .profile-card {
+    background: linear-gradient(145deg, var(--admin-white), var(--admin-light));
+    border-radius: 22px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    padding: 38px;
+    margin-bottom: 50px;
+    position: relative;
+    overflow: hidden;
+  }
 
-<p><strong>Password:</strong> ********</p>
+  .profile-card::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    left: -60px;
+    width: 160px;
+    height: 160px;
+    background-color: var(--admin-accent);
+    border-radius: 50%;
+    opacity: 0.18;
+  }
 
-<a href="{% url 'edit_profile' %}">
-    <button>Change Profile</button>
-</a>
-<a href="{% url 'change_password' %}">Change Password</a>
+  .profile-card h2 {
+    text-align: center;
+    margin-bottom: 32px;
+    color: var(--admin-primary);
+    font-size: 30px;
+    letter-spacing: 0.6px;
+  }
+
+  .profile-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--admin-lighter);
+    font-size: 15px;
+  }
+
+  .profile-row i {
+    color: var(--admin-primary);
+    margin-right: 14px;
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+  }
+
+  .profile-row strong {
+    width: 110px;
+    color: var(--admin-text-light);
+  }
+
+  .profile-actions {
+    margin-top: 32px;
+    display: flex;
+    gap: 14px;
+  }
+
+  .profile-actions a {
+    flex: 1;
+    text-decoration: none;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .btn-primary {
+    background-color: var(--admin-primary);
+    color: var(--admin-white);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--admin-primary-dark);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background-color: var(--admin-lighter);
+    color: var(--admin-text);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--admin-accent);
+    transform: translateY(-2px);
+  }
+
+  /* ===== Quotes Section ===== */
+  .quotes-section {
+    margin-top: 20px;
+  }
+
+  .quotes-title {
+    text-align: center;
+    font-size: 26px;
+    color: var(--admin-primary);
+    margin-bottom: 28px;
+  }
+
+  .quotes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+  }
+
+  .quote-card {
+    background-color: var(--admin-white);
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: var(--admin-shadow);
+    position: relative;
+    font-style: italic;
+    transition: transform 0.3s ease;
+  }
+
+  .quote-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .quote-card::before {
+    content: "“";
+    font-size: 64px;
+    color: var(--admin-accent);
+    position: absolute;
+    top: -20px;
+    left: 16px;
+    opacity: 0.4;
+  }
+
+  .quote-text {
+    margin-bottom: 14px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .quote-author {
+    text-align: right;
+    font-size: 14px;
+    color: var(--admin-text-light);
+    font-style: normal;
+  }
+</style>
+
+<div class="container">
+
+  <!-- Profile -->
+  <div class="profile-card">
+    <h2>My Profile</h2>
+
+    <div class="profile-row">
+      <i class="fas fa-user"></i>
+      <strong>Full Name:</strong>
+      {{ profile.first_name }} {{ profile.last_name }}
+    </div>
+
+    <div class="profile-row">
+      <i class="fas fa-id-badge"></i>
+      <strong>Username:</strong>
+      {{ profile.username }}
+    </div>
+
+    <div class="profile-row">
+      <i class="fas fa-envelope"></i>
+      <strong>Email:</strong>
+      {{ profile.email }}
+    </div>
+
+    <div class="profile-row">
+      <i class="fas fa-lock"></i>
+      <strong>Password:</strong>
+      ********
+    </div>
+
+    <div class="profile-actions">
+      <a href="{% url 'edit_profile' %}">
+        <button class="btn-primary">Change Profile</button>
+      </a>
+      <a href="{% url 'change_password' %}">
+        <button class="btn-secondary">Change Password</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- Quotes -->
+  <div class="quotes-section">
+    <h3 class="quotes-title">A Little Book Magic ✨</h3>
+
+    <div class="quotes-grid">
+      <div class="quote-card">
+        <div class="quote-text">
+          A room without books is like a body without a soul.
+        </div>
+        <div class="quote-author">— Cicero</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">
+          Until I feared I would lose it, I never loved to read. One does not love breathing.
+        </div>
+        <div class="quote-author">— Harper Lee</div>
+      </div>
+
+      <div class="quote-card">
+        <div class="quote-text">
+          Books are a uniquely portable magic.
+        </div>
+        <div class="quote-author">— Stephen King</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 {% endblock %}

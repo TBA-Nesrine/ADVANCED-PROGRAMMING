@@ -45,9 +45,7 @@
     <i class="fas fa-home"></i>
     <span>Home</span>
 </a>
-<a href="{% url 'user_books' %}" class="nav-link {% if 'user_books' in request.path %}active{% endif %}">
-    <i class="fas fa-book-open"></i>
-    <span>Books</span>
+
 </a>
 <a href="{% url 'user_mybag' %}" class="nav-link {% if 'user_mybag' in request.path %}active{% endif %}">
     <i class="fas fa-shopping-bag"></i>
@@ -62,11 +60,7 @@
     <i class="fas fa-envelope"></i>
     <span>Contact</span>
 </a>
-<!-- Optional: Keep Notes link only if you still want a general notes page -->
-<a href="{% url 'user_note' %}" class="nav-link {% if 'user_note' in request.path %}active{% endif %}">
-    <i class="fas fa-sticky-note"></i>
-    <span>Notes</span>
-</a>
+
 
                 <div class="nav-divider"></div>
                 
@@ -136,7 +130,7 @@
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <a href="{% url 'user_home' %}">Home</a>
-                <a href="{% url 'user_books' %}">Browse Books</a>
+                <a href="{% url 'user_home' %}">Browse Books</a>
                 <a href="{% url 'user_mybag' %}">My Bag</a>
                 <a href="{% url 'user_contactus' %}">Contact Us</a>
             </div>
