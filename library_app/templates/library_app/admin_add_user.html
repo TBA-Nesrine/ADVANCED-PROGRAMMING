@@ -1,8 +1,7 @@
-
 {% extends 'library_app/base_admin.html' %}
 {% block content %}
 
-<h2>Add New User</h2>
+<h2 style="color:#4A4A4A; margin-bottom:16px;">Add New User</h2>
 
 {% if messages %}
     {% for message in messages %}
@@ -14,27 +13,59 @@
     <p style="color:red; font-weight:600;">{{ error }}</p>
 {% endif %}
 
-<form method="POST" action="{% url 'admin_add_user' %}">
+<form method="POST" action="{% url 'admin_add_user' %}" style="max-width:500px;">
     {% csrf_token %}
 
-    <label for="reference_id">Reference ID:</label><br>
-    <input type="text" name="reference_id" id="reference_id" value="{{ request.POST.reference_id|default_if_none:'' }}"><br><br>
+    <label for="username">Username</label><br>
+    <input
+        type="text"
+        name="username"
+        id="username"
+        value="{{ request.POST.username|default_if_none:'' }}"
+        required
+        style="width:100%; padding:8px; margin-bottom:12px;"
+    >
 
-    <label for="user_name">Name:</label><br>
-    <input type="text" name="user_name" id="user_name" value="{{ request.POST.user_name|default_if_none:'' }}" required><br><br>
+    <label for="email">Email</label><br>
+    <input
+        type="email"
+        name="email"
+        id="email"
+        value="{{ request.POST.email|default_if_none:'' }}"
+        required
+        style="width:100%; padding:8px; margin-bottom:12px;"
+    >
 
-    <label for="email">Email:</label><br>
-    <input type="email" name="email" id="email" value="{{ request.POST.email|default_if_none:'' }}" required><br><br>
+    <label for="first_name">First name</label><br>
+    <input
+        type="text"
+        name="first_name"
+        id="first_name"
+        value="{{ request.POST.first_name|default_if_none:'' }}"
+        style="width:100%; padding:8px; margin-bottom:12px;"
+    >
 
-    <label for="phone_contact">Phone:</label><br>
-    <input type="text" name="phone_contact" id="phone_contact" value="{{ request.POST.phone_contact|default_if_none:'' }}" required><br><br>
+    <label for="last_name">Last name</label><br>
+    <input
+        type="text"
+        name="last_name"
+        id="last_name"
+        value="{{ request.POST.last_name|default_if_none:'' }}"
+        style="width:100%; padding:8px; margin-bottom:18px;"
+    >
 
-    <label for="user_address">Address:</label><br>
-    <textarea name="user_address" id="user_address" required>{{ request.POST.user_address|default_if_none:'' }}</textarea><br><br>
-
-    <button type="submit">Add User</button>
+    <button
+        type="submit"
+        style="background:#854049; color:white; padding:10px 22px; border:none; border-radius:20px;"
+    >
+        Add User
+    </button>
 </form>
 
-<a href="{% url 'admin_users' %}">Back to Users</a>
+<br>
+
+<a href="{% url 'admin_users' %}" style="text-decoration:none;">
+    ← Back to Users
+</a>
 
 {% endblock %}

@@ -117,6 +117,8 @@ def admin_books(request):
     })
 
 
+
+
 from rest_framework.test import APIRequestFactory
 
 @login_required
@@ -213,44 +215,26 @@ def admin_users_view(request):
         "users": response.data
     })
 
-from django.shortcuts import render
-from library_app.models import UserProfile
 
-def admin_users_view(request):
-    users = UserProfile.objects.all()
-    return render(request, "library_app/admin_users.html", {"users": users})
+from django.shortcuts import render
+
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from library_app.models import UserProfile  # your custom User model
+ # your custom User model
 
 @login_required
 def admin_add_user_view(request):
     if request.method == "POST":
-        # Get form data safely, default to empty string to avoid None
-        full_name = request.POST.get("user_name", "").strip()
-        email = request.POST.get("email", "").strip()
-        reference_id = request.POST.get("reference_id", "").strip()
-        phone_contact = request.POST.get("phone_contact", "").strip()
-        user_address = request.POST.get("user_address", "").strip()
+        username = request.POST.get("username")
+        email = request.POST.get("email")
 
-        if not full_name or not email:
-            return render(request, "library_app/admin_add_user.html", {"error": "Name and email are required."})
-
-        # Create Django user
-        user = User.objects.create(username=full_name, email=email)
-        user.set_password("defaultpassword")  # you can later ask for a password
-        user.save()
-
-        # Create custom profile
-        UserProfile.objects.create(
-            user=user,
-            reference_id=reference_id,
-            phone_contact=phone_contact,
-            user_address=user_address,
-            active=True
+        User.objects.create_user(
+            username=username,
+            email=email,
+            password="defaultpassword"
         )
 
         messages.success(request, "User added successfully")
@@ -293,7 +277,7 @@ def admin_update_user_view(request, user_id):
     if request.method == "POST":
         user.username = request.POST.get("username")
         user.email = request.POST.get("email")
-        user.is_active = request.POST.get("is_active") == "on"
+        user.is_active = request.POST.get("is_active") == "True"  # ✅ fix here
         user.save()
 
         return redirect("admin_users")

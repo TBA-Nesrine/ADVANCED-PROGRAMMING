@@ -4,19 +4,25 @@
 <h2 style="color:#4A4A4A; margin-bottom:10px;">All Users</h2>
 
 <form method="GET" action="{% url 'admin_users' %}" style="margin-bottom:10px;">
-    <input type="text"
-           name="q"
-           placeholder="Search..."
-           value="{{ request.GET.q }}"
-           style="padding:8px; width:300px; border-radius:6px;">
-    <button type="submit"
-            style="background:#854049; color:white; padding:8px 16px; border:none; border-radius:6px;">
+    <input
+        type="text"
+        name="q"
+        placeholder="Search by username or email..."
+        value="{{ request.GET.q }}"
+        style="padding:8px; width:300px; border-radius:6px;"
+    >
+    <button
+        type="submit"
+        style="background:#854049; color:white; padding:8px 16px; border:none; border-radius:6px;"
+    >
         Search
     </button>
 </form>
 
 <a href="{% url 'admin_add_user' %}" style="display:inline-block; margin-bottom:12px;">
-    <button style="background:#854049; color:white; padding:8px 18px; border:none; border-radius:20px;">
+    <button
+        style="background:#854049; color:white; padding:8px 18px; border:none; border-radius:20px;"
+    >
         Add New User
     </button>
 </a>
@@ -24,8 +30,8 @@
 <table style="width:100%; border-collapse:collapse;">
     <thead>
         <tr style="background:#f4f4f4;">
-            <th>Reference</th>
-            <th>Name</th>
+            <th>ID</th>
+            <th>Username</th>
             <th>Email</th>
             <th>Status</th>
             <th style="width:170px;">Actions</th>
@@ -35,11 +41,11 @@
     <tbody>
     {% for u in users %}
         <tr>
-            <td>{{ u.reference_id }}</td>
-            <td>{{ u.user.username }}</td>
-            <td>{{ u.user.email }}</td>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
             <td>
-                {% if u.active %}
+                {% if u.is_active %}
                     <span style="color:green;">Active</span>
                 {% else %}
                     <span style="color:red;">Inactive</span>
@@ -50,38 +56,51 @@
                 <div style="display:flex; flex-direction:column; gap:8px;">
 
                     <!-- EDIT -->
-                    <a href="{% url 'admin_edit_user' u.user.id %}" style="text-decoration:none;">
+                    <a href="{% url 'admin_edit_user' u.id %}" style="text-decoration:none;">
                         <button class="action-btn">
                             Edit
                         </button>
                     </a>
 
                     <!-- DELETE -->
-                    <form method="POST" action="{% url 'admin_delete_user' u.user.id %}" style="margin:0;" class="table-form">
+                    <form
+                        method="POST"
+                        action="{% url 'admin_delete_user' u.id %}"
+                        style="margin:0;"
+                    >
                         {% csrf_token %}
-                        <button type="submit" class="action-btn"
-                            onclick="return confirm('Are you sure you want to delete this user?');">
+                        <button
+                            type="submit"
+                            class="action-btn"
+                            onclick="return confirm('Are you sure you want to delete this user?');"
+                        >
                             Delete
                         </button>
                     </form>
 
                     <!-- ACTIVATE / DEACTIVATE -->
-                    {% if u.reference_id %}
-                        {% if u.active %}
-                            <form method="POST" action="{% url 'deactivate_user' u.reference_id %}" style="margin:0;" class="table-form">
-                                {% csrf_token %}
-                                <button type="submit" class="action-btn">
-                                    Deactivate
-                                </button>
-                            </form>
-                        {% else %}
-                            <form method="POST" action="{% url 'activate_user' u.reference_id %}" style="margin:0;" class="table-form">
-                                {% csrf_token %}
-                                <button type="submit" class="action-btn">
-                                    Activate
-                                </button>
-                            </form>
-                        {% endif %}
+                    {% if u.is_active %}
+                        <form
+                            method="POST"
+                            action="{% url 'deactivate_user' u.id %}"
+                            style="margin:0;"
+                        >
+                            {% csrf_token %}
+                            <button type="submit" class="action-btn">
+                                Deactivate
+                            </button>
+                        </form>
+                    {% else %}
+                        <form
+                            method="POST"
+                            action="{% url 'activate_user' u.id %}"
+                            style="margin:0;"
+                        >
+                            {% csrf_token %}
+                            <button type="submit" class="action-btn">
+                                Activate
+                            </button>
+                        </form>
                     {% endif %}
 
                 </div>

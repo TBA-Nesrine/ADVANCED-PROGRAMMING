@@ -85,10 +85,22 @@ def confirm_order(request, order_id):
 def admin_reviews(request):
     return Response(ReviewSerializer(Review.objects.all(), many=True).data)
 
-@api_view(['GET'])
+# api/admin.py
+from django.contrib.auth.models import User
+from rest_framework.response import Response
+
 def admin_users(request):
     users = User.objects.all()
-    return Response(UserSerializer(users, many=True).data)
+    data = []
+    for u in users:
+        data.append({
+            "id": u.id,               
+            "username": u.username,
+            "email": u.email,
+            "is_active": u.is_active
+        })
+    return Response(data)
+
 
 @api_view(['PATCH'])
 def admin_update_user(request, user_id):
@@ -100,29 +112,21 @@ def admin_update_user(request, user_id):
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from library_app.models import UserProfile
+
 
 @api_view(['PATCH'])
-def activate_user(request, ref):
-    try:
-        profile = UserProfile.objects.get(reference_id=ref)
-    except UserProfile.DoesNotExist:
-        return Response({"error": "User not found"}, status=404)
-    
-    profile.active = True
-    profile.save()
-    return Response({"message": "activated"})
+def activate_user(request, user_id):
+    user = User.objects.get(id=user_id)
+    user.is_active = True
+    user.save()
+    return Response({"message": "User activated"})
 
 @api_view(['PATCH'])
-def deactivate_user(request, ref):
-    try:
-        profile = UserProfile.objects.get(reference_id=ref)
-    except UserProfile.DoesNotExist:
-        return Response({"error": "User not found"}, status=404)
-    
-    profile.active = False
-    profile.save()
-    return Response({"message": "deactivated"})
+def deactivate_user(request, user_id):
+    user = User.objects.get(id=user_id)
+    user.is_active = False
+    user.save()
+    return Response({"message": "User deactivated"})
 
 
 @api_view(['POST'])
@@ -138,14 +142,9 @@ def admin_add_user(request):
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from library_app.models import UserProfile
+
 
 @api_view(['DELETE'])
 def admin_delete_user(request, user_id):
-    user = User.objects.get(id=user_id)
-
-    # delete related profile if exists
-    UserProfile.objects.filter(user=user).delete()
-
-    user.delete()
+    User.objects.filter(id=user_id).delete()
     return Response({"message": "User deleted successfully"})
