@@ -38,13 +38,9 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)  # nested user info
 
-    class Meta:
-        model = UserProfile
-        fields = ['user', 'reference_id', 'phone_contact', 'user_address']
+from django.contrib.auth.models import User
+from rest_framework import serializers
 
