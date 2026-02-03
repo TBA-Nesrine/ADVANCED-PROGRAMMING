@@ -7,16 +7,35 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <!-- Add Font Awesome for Google icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Make Google button match the main login button */
-        .social-login {
+        /* Style for main login button */
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Google button matching main button style */
+        .btn-google {
             display: block;
             width: 100%;
             padding: 12px;
             margin: 10px 0;
             border: none;
             border-radius: 5px;
-            background-color: #4285F4; /* Google blue */
+            background-color: #4285F4;
             color: white;
             font-size: 16px;
             text-align: center;
@@ -24,8 +43,12 @@
             text-decoration: none;
         }
 
-        .social-login:hover {
+        .btn-google:hover {
             background-color: #357ae8;
+        }
+
+        .btn-google i {
+            margin-right: 8px;
         }
     </style>
 </head>
@@ -49,8 +72,9 @@
         <button type="submit">Login</button>
     </form>
 
-    <a class="social-login" href="{% provider_login_url 'google' %}">
-        Sign in with Google
+    <!-- Fixed Google Sign-In Button -->
+    <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn-google">
+        <i class="fab fa-google"></i> Sign in with Google
     </a>
 
     <p>Don't have an account?

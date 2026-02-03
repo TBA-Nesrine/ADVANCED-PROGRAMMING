@@ -1,0 +1,24 @@
+# Config files with secrets
+config.py
+*.local.py
+.env
+.env.local
+
+# Database
+db.sqlite3
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

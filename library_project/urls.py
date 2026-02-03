@@ -27,11 +27,10 @@ from django.urls import path, include
 
 urlpatterns = [
 
-    path('admin/', admin.site.urls),
-
     path('accounts/', include('allauth.urls')),  # ✅ REQUIRED
 
     path('', include('library_app.urls')),
+     path('oauth/', include('social_django.urls', namespace='social')),
    
     
 

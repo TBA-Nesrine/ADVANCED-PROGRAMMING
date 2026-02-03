@@ -44,6 +44,13 @@
     color: #7b3f3f;
 }
 
+.card span {
+    display: block;
+    font-size: 12px;
+    color: #999;
+    margin-top: 6px;
+}
+
 /* Charts */
 .charts {
     display: grid;
@@ -77,25 +84,31 @@
 
 <!-- KPI CARDS -->
 <div class="cards">
+
     <div class="card">
-        <h2>Total Books</h2>
-        <p>{{ total_books }}</p>
+        <h2>Active Users</h2>
+        <p id="activeUsersPct"></p>
+        <span>users currently active</span>
     </div>
 
     <div class="card">
-        <h2>Total Orders</h2>
-        <p>{{ total_orders }}</p>
+        <h2>User Satisfaction</h2>
+        <p id="satisfactionPct"></p>
+        <span>positive experience rate</span>
     </div>
 
     <div class="card">
-        <h2>Total Users</h2>
-        <p>{{ total_users }}</p>
+        <h2>Books Borrowed</h2>
+        <p id="borrowedPct"></p>
+        <span>of total books</span>
     </div>
 
     <div class="card">
-        <h2>Pending Reviews</h2>
-        <p>{{ pending_reviews }}</p>
+        <h2>Reviews Completed</h2>
+        <p id="reviewsPct"></p>
+        <span>submitted by users</span>
     </div>
+
 </div>
 
 <!-- CHARTS -->
@@ -120,27 +133,64 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+/* HELPERS */
+function rand(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function percent(part, total) {
+    return Math.round((part / total) * 100);
+}
+
+/* BASE DATA (LOGICAL LIMITS) */
+const totalUsers   = rand(6, 10);
+const activeUsers  = rand(4, totalUsers);
+
+const totalBooks   = rand(12, 20);
+const borrowedBooks = rand(6, totalBooks);
+
+const totalReviews = rand(5, 10);
+const positiveReviews = rand(4, totalReviews);
+
+/* KPI CALCULATIONS */
+document.getElementById("activeUsersPct").innerText =
+    percent(activeUsers, totalUsers) + "%";
+
+document.getElementById("borrowedPct").innerText =
+    percent(borrowedBooks, totalBooks) + "%";
+
+document.getElementById("reviewsPct").innerText =
+    percent(positiveReviews, totalReviews) + "%";
+
+/* Satisfaction is average of activity + reviews */
+const satisfaction =
+    Math.round(
+        (percent(activeUsers, totalUsers) +
+         percent(positiveReviews, totalReviews)) / 2
+    );
+
+document.getElementById("satisfactionPct").innerText = satisfaction + "%";
+
+/* CHARTS */
+
 /* Most Borrowed Books */
 new Chart(document.getElementById('borrowedChart'), {
     type: 'bar',
     data: {
-        labels: [
-            'To Kill a Mockingbird',
-            'Pride and Prejudice',
-            '1984',
-            'Brave New World',
-            'The Great Gatsby'
-        ],
+        labels: ['1984', 'Pride & Prejudice', 'The Great Gatsby', 'Brave New World', 'Mockingbird'],
         datasets: [{
-            data: [95, 80, 70, 60, 50],
+            data: [
+                rand(5, 20),
+                rand(5, 20),
+                rand(5, 20),
+                rand(5, 20),
+                rand(5, 20)
+            ],
             backgroundColor: '#6b8e95'
         }]
     },
     options: {
         plugins: { legend: { display: false } },
-        scales: {
-            y: { beginAtZero: true }
-        }
+        scales: { y: { beginAtZero: true } }
     }
 });
 
@@ -150,7 +200,12 @@ new Chart(document.getElementById('categoryChart'), {
     data: {
         labels: ['Classic', 'Dystopian', 'Romance', 'Coming of Age'],
         datasets: [{
-            data: [33, 33, 17, 17],
+            data: [
+                rand(2, 8),
+                rand(2, 8),
+                rand(2, 8),
+                rand(2, 8)
+            ],
             backgroundColor: [
                 '#6b8e95',
                 '#c2a383',
@@ -167,7 +222,14 @@ new Chart(document.getElementById('activityChart'), {
     data: {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [{
-            data: [45, 52, 60, 58, 72, 85],
+            data: [
+                rand(40, 70),
+                rand(45, 75),
+                rand(50, 80),
+                rand(55, 85),
+                rand(60, 90),
+                rand(65, 95)
+            ],
             borderColor: '#6b8e95',
             tension: 0.4,
             fill: false
