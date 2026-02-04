@@ -700,4 +700,42 @@ def user_book_detail_view(request, book_id):
     )
 
 
+# views.py
+
+from django.shortcuts import render, redirect
+from django.contrib.admin.views.decorators import staff_member_required
+from rest_framework.test import APIRequestFactory
+from .api.admin import admin_late_returns, admin_send_return_warning
+
+
+@staff_member_required
+def admin_returns_view(request):
+    factory = APIRequestFactory()
+
+    # GET late returns
+    api_get = factory.get('/api/admin/late-returns/')
+    api_get.user = request.user
+    late_orders = admin_late_returns(api_get).data
+
+    if request.method == "POST":
+        # If Select All pressed
+        if 'select_all' in request.POST:
+            order_ids = [str(o['id']) for o in late_orders]
+        else:
+            order_ids = request.POST.getlist('order_ids')
+
+        if order_ids:
+            api_post = factory.post(
+                '/api/admin/send-warning/',
+                {"order_ids": order_ids},
+                format='json'
+            )
+            api_post.user = request.user
+            admin_send_return_warning(api_post)
+
+        return redirect('admin_returns')
+
+    return render(request, 'library_app/admin_returns.html', {
+    'late_orders': late_orders
+    })
 

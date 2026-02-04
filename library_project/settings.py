@@ -162,6 +162,16 @@ SOCIALACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_LOGIN_REDIRECT_URL = '/user/home/'  # Default
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'liliakamiri4@gmail.com'
+EMAIL_HOST_PASSWORD = 'jtzf asra jruy fyja'  # For Gmail, use App Password
+DEFAULT_FROM_EMAIL = 'liliakamiri4@gmail.com'
+
+
+
 
 # Django REST Framework
 REST_FRAMEWORK = {

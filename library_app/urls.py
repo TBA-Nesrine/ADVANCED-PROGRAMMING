@@ -4,6 +4,10 @@ from . import views
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import path, include
+from django.urls import path
+from . import views
 
 
 urlpatterns = [
@@ -12,12 +16,13 @@ urlpatterns = [
     # ROOT REDIRECT
     # =====================
     path('', lambda request: redirect('login')),
-
+    path('admin/', admin.site.urls),
     # =====================
     # API ROUTES
     # =====================
     path('api/', include('library_app.api.urls')),
-
+    
+    
     # =====================
     # AUTH (TEMPLATES)
     # =====================
@@ -59,6 +64,8 @@ urlpatterns = [
     path('dashboard/reviews/', views.admin_reviews_view, name='admin_reviews'),
     path('dashboard/reviews/delete/<int:review_id>/',views.admin_delete_review_view,name='admin_delete_review'),
 
+    # -------- RETURNS --------
+    path('dashboard/returns/', views.admin_returns_view, name='admin_returns'),
 
     # =====================
     # USER SIDE

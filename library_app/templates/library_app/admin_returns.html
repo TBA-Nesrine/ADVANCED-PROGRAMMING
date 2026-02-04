@@ -1,18 +1,48 @@
 {% extends 'library_app/base_admin.html' %}
+
 {% block content %}
-<h2>Returned Books</h2>
-<table>
-<tr><th>User</th><th>Book</th><th>Quantity</th><th>Date Borrowed</th><th>Date Returned</th></tr>
-{% for order in returns %}
-<tr>
-<td>{{ order.user.username }}</td>
-<td>{{ order.book.title }}</td>
-<td>{{ order.quantity }}</td>
-<td>{{ order.date_rent }}</td>
-<td>{{ order.date_return }}</td>
-</tr>
-{% empty %}
-<tr><td colspan="5">No returns yet</td></tr>
-{% endfor %}
-</table>
+<h2 style="color:#854049;">Late Book Returns (Over 1 Month)</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <button type="submit" name="select_all" value="1">
+        Send Warning to All
+    </button>
+
+    <table style="width:100%; background:white; margin-top:15px;">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>User</th>
+                <th>Email</th>
+                <th>Book</th>
+                <th>Date Borrowed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in late_orders %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="order_ids" value="{{ o.id }}">
+                </td>
+                <td>{{ o.username }}</td>
+                <td>{{ o.email }}</td>
+                <td>{{ o.book }}</td>
+                <td>{{ o.date_rent|date:"Y-m-d" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No late returns 🎉</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+
+    <button type="submit">
+        Send Warning to Selected
+    </button>
+</form>
 {% endblock %}

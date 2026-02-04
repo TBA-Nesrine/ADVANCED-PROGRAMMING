@@ -31,7 +31,10 @@ urlpatterns = [
     path('admin/users/<int:user_id>/update/', admin_update_user),
     path('admin/users/activate/<str:ref>/', activate_user),
     path('admin/users/deactivate/<str:ref>/', deactivate_user),
-    
+    # admin – late returns
+    path('admin/late-returns/', admin_late_returns),
+    path('admin/send-warning/', admin_send_return_warning),
+
     #user
     path('user/books/', user_books),
     path('user/borrow/', user_borrow_book),

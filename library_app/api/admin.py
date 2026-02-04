@@ -148,3 +148,60 @@ from django.contrib.auth.models import User
 def admin_delete_user(request, user_id):
     User.objects.filter(id=user_id).delete()
     return Response({"message": "User deleted successfully"})
+
+
+# api/admin.py
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from django.utils import timezone
+from datetime import timedelta
+from django.core.mail import send_mail
+from ..models import Order
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def admin_late_returns(request):
+    one_month_ago = timezone.now() - timedelta(minutes=5)
+
+    orders = Order.objects.filter(
+        status__in=['accepted', 'waiting'],
+        date_rent__lte=one_month_ago
+    ).select_related('user', 'book')
+
+    return Response([
+        {
+            "id": o.id,
+            "username": o.user.username,
+            "email": o.user.email,
+            "book": o.book.title,
+            "date_rent": o.date_rent,
+        }
+        for o in orders
+    ])
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def admin_send_return_warning(request):
+    order_ids = request.data.get('order_ids', [])
+
+    orders = Order.objects.filter(id__in=order_ids)
+
+    for order in orders:
+        send_mail(
+            subject="⚠️ Book Return Reminder",
+            message=(
+                f"Hello {order.user.first_name or order.user.username},\n\n"
+                f"You borrowed '{order.book.title}' on {order.date_rent.date()}.\n"
+                "Please return it as soon as possible.\n\n"
+                "Library Administration"
+            ),
+            from_email="library@example.com",
+            recipient_list=[order.user.email],
+            fail_silently=False,
+        )
+
+    return Response({"message": "Warnings sent"})
