@@ -54,8 +54,12 @@ urlpatterns = [
     path('dashboard/users/update/<int:user_id>/', views.admin_update_user_view, name='admin_update_user'),
     # -------- ORDERS --------
     path('dashboard/orders/', views.admin_orders_view, name='admin_orders'),
-    path('dashboard/orders/accept/<int:order_id>/', views.admin_accept_order, name='admin_accept_order'),
-    path('dashboard/orders/refuse/<int:order_id>/', views.admin_refuse_order, name='admin_refuse_order'),
+    #path('dashboard/orders/accept/<int:order_id>/', views.admin_accept_order, name='admin_accept_order'),
+    #path('dashboard/orders/refuse/<int:order_id>/', views.admin_refuse_order, name='admin_refuse_order'),
+    
+    path("dashboard/orders/accept/<int:order_id>/",views.admin_accept_order_view,name="admin_accept_order"),
+    path("dashboard/orders/refuse/<int:order_id>/",views.admin_refuse_order_view,name="admin_refuse_order_view"),
+
 
     # -------- REVIEWS --------
     path('dashboard/reviews/', views.admin_reviews_view, name='admin_reviews'),

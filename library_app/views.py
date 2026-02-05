@@ -658,20 +658,57 @@ def change_password_view(request):
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import Order
+from rest_framework.test import APIRequestFactory
+from library_app.api.admin import admin_accept_order
+from django.contrib.admin.views.decorators import staff_member_required
 
-def admin_accept_order(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    order.status = 'accepted'
-    order.save()
-    messages.success(request, f"Order #{order.id} accepted!")
-    return redirect('admin_orders')
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from rest_framework.test import APIRequestFactory
+from library_app.api.admin import admin_accept_order
 
-def admin_refuse_order(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    order.status = 'refused'
-    order.save()
-    messages.error(request, f"Order #{order.id} refused.")
-    return redirect('admin_orders')
+
+@staff_member_required
+def admin_accept_order_view(request, order_id):
+    factory = APIRequestFactory()
+
+    api_request = factory.patch(
+        f"/api/admin/orders/{order_id}/accept/"
+    )
+    api_request.user = request.user
+
+    response = admin_accept_order(api_request, order_id)
+
+    if response.status_code == 200:
+        messages.success(request, "Order accepted successfully")
+    else:
+        messages.error(
+            request,
+            response.data.get("error", "Something went wrong")
+        )
+
+    return redirect("admin_orders")
+
+# views.py
+from rest_framework.test import APIRequestFactory
+from django.contrib import messages
+from django.shortcuts import redirect
+from .api.admin import admin_refuse_order
+
+def admin_refuse_order_view(request, order_id):
+    factory = APIRequestFactory()
+    api_request = factory.patch(f"/api/admin/orders/{order_id}/refuse/")
+    api_request.user = request.user
+
+    response = admin_refuse_order(api_request, order_id)
+
+    if response.status_code == 200:
+        messages.success(request, "Order refused and deleted successfully")
+    else:
+        messages.error(request, response.data.get("error", "Something went wrong"))
+
+    return redirect("admin_orders")
+
 
 
 from django.shortcuts import render

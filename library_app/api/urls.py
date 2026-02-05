@@ -35,6 +35,9 @@ urlpatterns = [
     path('admin/late-returns/', admin_late_returns),
     path('admin/send-warning/', admin_send_return_warning),
 
+    path("admin/orders/<int:order_id>/accept/",admin_accept_order,name="api_admin_accept_order",),
+    path('admin/orders/<int:order_id>/refuse/', admin_refuse_order, name='api_admin_refuse_order'),
+
     #user
     path('user/books/', user_books),
     path('user/borrow/', user_borrow_book),

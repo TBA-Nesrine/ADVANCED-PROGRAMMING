@@ -46,24 +46,52 @@ def admin_orders(request):
     orders = Order.objects.filter(status='waiting').select_related('user', 'book')
     return Response(OrderSerializer(orders, many=True).data)
 
-@api_view(['PATCH'])
+from django.shortcuts import get_object_or_404
+
+
+@api_view(["PATCH"])
 @permission_classes([IsAdminUser])
 def admin_accept_order(request, order_id):
-    order = Order.objects.get(id=order_id, status='waiting')
+    order = get_object_or_404(Order, id=order_id)
+
+    if order.status != "waiting":
+        return Response(
+            {"error": "Order already processed"},
+            status=400
+        )
+
     book = order.book
 
     if book.quantity < order.quantity:
-        return Response({"error": "Not enough stock"}, status=400)
+        return Response(
+            {"error": "Not enough stock"},
+            status=400
+        )
 
-    # decrease quantity ONLY NOW
     book.quantity -= order.quantity
     book.save()
 
-    order.status = 'accepted'
+    order.status = "accepted"
+    order.accepted_at = timezone.now()
     order.save()
 
     return Response({"message": "Order accepted"})
 
+# api/admin.py
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from ..models import Order
+
+
+
+@api_view(["PATCH"])
+def admin_refuse_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.delete()  # delete the order if refused
+    return Response({"success": True})
 
 
 @api_view(['PATCH'])
@@ -167,8 +195,8 @@ def admin_late_returns(request):
     one_month_ago = timezone.now() - timedelta(minutes=5)
 
     orders = Order.objects.filter(
-        status__in=['accepted', 'waiting'],
-        date_rent__lte=one_month_ago
+        status__in=['accepted'],
+        accepted_at__lte=one_month_ago
     ).select_related('user', 'book')
 
     return Response([
@@ -177,7 +205,7 @@ def admin_late_returns(request):
             "username": o.user.username,
             "email": o.user.email,
             "book": o.book.title,
-            "date_rent": o.date_rent,
+            "accepted_at": o.accepted_at,
         }
         for o in orders
     ])

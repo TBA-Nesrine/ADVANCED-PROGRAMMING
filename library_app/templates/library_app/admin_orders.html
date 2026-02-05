@@ -25,7 +25,7 @@
         {% csrf_token %}
         <button class="btn-accept">Accept</button>
     </form>
-    <form method="POST" action="{% url 'admin_refuse_order' order.id %}" style="display:inline;">
+    <form method="POST" action="{% url 'admin_refuse_order_view' order.id %}" style="display:inline;">
         {% csrf_token %}
         <button class="btn-refuse">Refuse</button>
     </form>

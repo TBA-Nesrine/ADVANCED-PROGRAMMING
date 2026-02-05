@@ -31,6 +31,7 @@ class Order(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     date_rent = models.DateTimeField(auto_now_add=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
     date_return = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='waiting')
 
