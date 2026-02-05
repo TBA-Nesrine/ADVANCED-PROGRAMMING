@@ -104,7 +104,7 @@ git clone <repository-url>
 ```bash
 cd Desktop
 cd <cloned-project-folder>
-cd advanced programming
+cd ADVANCED-PROGRAMMING
 ```
 
 ---
