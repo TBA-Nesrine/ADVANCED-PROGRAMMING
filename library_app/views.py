@@ -105,16 +105,27 @@ def admin_home(request):
     })
 
 
+from django.db.models import Q
+
+from .api.admin import api_admin_books
+
 @login_required
 def admin_books(request):
     factory = APIRequestFactory()
-    api_request = factory.get("/admin/books/")
+
+    api_request = factory.get(
+        "/admin/books/",
+        {"q": request.GET.get("q", "")}
+    )
     api_request.user = request.user
 
-    response = user_books(api_request)  # reuse books API
+    response = api_admin_books(api_request)
+
     return render(request, "library_app/admin_books.html", {
         "books": response.data
     })
+
+
 
 
 
@@ -204,13 +215,22 @@ def admin_delete_review_view(request, review_id):
     return redirect("admin_reviews")
 
 
+from .api.admin import api_admin_users
+from rest_framework.test import APIRequestFactory
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
 @login_required
 def admin_users_view(request):
     factory = APIRequestFactory()
-    api_request = factory.get("/admin/users/")
+    api_request = factory.get(
+        "/admin/users/",
+        {"q": request.GET.get("q", "")}  # pass search query
+    )
     api_request.user = request.user
 
-    response = admin_users(api_request)
+    response = api_admin_users(api_request)  # call the API function
+
     return render(request, "library_app/admin_users.html", {
         "users": response.data
     })

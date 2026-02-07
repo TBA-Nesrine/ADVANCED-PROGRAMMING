@@ -24,12 +24,26 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 
+from rest_framework import serializers
+from library_app.models import Order
+
 class OrderSerializer(serializers.ModelSerializer):
-    book = BookSerializer(read_only=True)
+    user_id = serializers.IntegerField(source="user.id", read_only=True)
+    username = serializers.CharField(source="user.username", read_only=True)
+    book_title = serializers.CharField(source="book.title", read_only=True)
 
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = [
+            "id",
+            "user_id",
+            "username",
+            "book_title",
+            "quantity",
+            "date_rent",
+            "date_return",
+            "status",
+        ]
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:

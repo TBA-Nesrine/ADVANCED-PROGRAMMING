@@ -12,6 +12,24 @@ from ..serializers import BookSerializer
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
+from django.db.models import Q
+
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def api_admin_books(request):
+    q = request.GET.get("q", "")
+
+    books = Book.objects.all()
+
+    if q:
+        books = books.filter(
+            Q(title__icontains=q) |
+            Q(author__icontains=q)
+        )
+
+    return Response(BookSerializer(books, many=True).data)
+
 
 
 @api_view(['GET'])
@@ -117,17 +135,31 @@ def admin_reviews(request):
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 
-def admin_users(request):
+from rest_framework.response import Response
+from django.db.models import Q
+from django.contrib.auth.models import User
+
+def api_admin_users(request):  # renamed to avoid collisions
+    q = request.GET.get("q", "")  # get search query
+
     users = User.objects.all()
+
+    if q:  # filter by username or email
+        users = users.filter(
+            Q(username__icontains=q) |
+            Q(email__icontains=q)
+        )
+
     data = []
     for u in users:
         data.append({
-            "id": u.id,               
+            "id": u.id,
             "username": u.username,
             "email": u.email,
             "is_active": u.is_active
         })
     return Response(data)
+
 
 
 @api_view(['PATCH'])
