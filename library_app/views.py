@@ -796,3 +796,80 @@ def admin_returns_view(request):
     'late_orders': late_orders
     })
 
+
+@login_required
+def admin_add_genre_page(request):
+    if request.method == "POST":
+        factory = APIRequestFactory()
+        api_request = factory.post(
+            "/api/admin/genres/add/",
+            {"name": request.POST.get("name")}
+        )
+        api_request.user = request.user
+
+        response = admin_add_genre(api_request)
+
+        if response.status_code == 201:
+            messages.success(request, "Genre added successfully ✅")
+            return redirect("admin_books")
+        else:
+            messages.error(
+                request,
+                response.data.get("error", "Can't add genre")
+            )
+
+    return render(request, "library_app/admin_add_genre.html")
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from rest_framework.test import APIRequestFactory
+from .api.admin import admin_genres_list, admin_delete_genre
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from rest_framework.test import APIRequestFactory
+from library_app.api.admin import admin_genres_list
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from rest_framework.test import APIRequestFactory
+from library_app.api.admin import admin_genres_list, admin_delete_genre
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from rest_framework.test import APIRequestFactory
+from library_app.api.admin import admin_genres_list, admin_delete_genre
+
+@login_required
+def admin_delete_genre_list(request):
+    factory = APIRequestFactory()
+    api_request = factory.get("/api/admin/genres/")
+    api_request.user = request.user
+
+    response = admin_genres_list(api_request)
+    return render(request, "library_app/admin_delete_genre.html", {"genres": response.data})
+
+
+@login_required
+def admin_delete_genre_action(request, genre_id):
+    if request.method != "POST":
+        messages.error(request, "Invalid request method")
+        return redirect("admin_delete_genre_list")
+
+    factory = APIRequestFactory()
+    api_request = factory.delete(f"/api/admin/genres/delete/{genre_id}/")
+    api_request.user = request.user
+
+    response = admin_delete_genre(api_request, genre_id)
+
+    if response.status_code == 200:
+        messages.success(request, response.data.get("message", "Genre deleted successfully"))
+    else:
+        messages.error(request, response.data.get("error", "Cannot delete genre"))
+
+    return redirect("admin_delete_genre_list")

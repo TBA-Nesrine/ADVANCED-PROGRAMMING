@@ -41,7 +41,14 @@ urlpatterns = [
     path('dashboard/books/edit/<int:book_id>/', views.admin_update_book_view, name='admin_edit_book'),
     path('dashboard/books/update/<int:book_id>/', views.admin_update_book_view, name='admin_update_book'),
     path('dashboard/books/delete/<int:book_id>/', views.admin_delete_book_view, name='admin_delete_book'),
-
+    
+    path(
+    'dashboard/genres/add/',
+    views.admin_add_genre_page,
+    name='admin_add_genre_page'
+),
+    path("dashboard/genres/", views.admin_delete_genre_list, name="admin_delete_genre_list"),
+    path("dashboard/genres/delete/<int:genre_id>/", views.admin_delete_genre_action, name="admin_delete_genre_action"),
     # -------- USERS --------
     path('dashboard/users/', views.admin_users_view, name='admin_users'),
     path('dashboard/users/add/', views.admin_add_user_view, name='admin_add_user'),

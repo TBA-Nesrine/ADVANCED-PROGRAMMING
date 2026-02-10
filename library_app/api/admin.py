@@ -265,3 +265,65 @@ def admin_send_return_warning(request):
         )
 
     return Response({"message": "Warnings sent"})
+
+#genre ------------------------------------------------------------------------------------------------------------
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from django.db.models.functions import Lower
+from ..models import Genre
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def admin_add_genre(request):
+    name = request.data.get("name", "").strip()
+
+    if not name:
+        return Response(
+            {"error": "Genre name is required"},
+            status=400
+        )
+
+    #Case-insensitive check
+    if Genre.objects.filter(name__iexact=name).exists():
+        return Response(
+            {"error": "Can't add genre because it already exists"},
+            status=400
+        )
+
+    genre = Genre.objects.create(name=name)
+    return Response(
+        {"message": "Genre added successfully", "id": genre.id, "name": genre.name},
+        status=201
+    )
+
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework import status
+from ..models import Genre
+from django.db.models import Count
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def admin_genres_list(request):
+    genres = Genre.objects.annotate(nb_books=Count('books')).order_by('name')
+    data = [
+        {"id": g.id, "name": g.name, "nb_books": g.nb_books}
+        for g in genres
+    ]
+    return Response(data)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def admin_delete_genre(request, genre_id):
+    try:
+        genre = Genre.objects.get(id=genre_id)
+    except Genre.DoesNotExist:
+        return Response({"error": "Genre not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    genre.delete()  # safe to delete even if linked to books
+    return Response({"message": "Genre deleted successfully"}, status=status.HTTP_200_OK)
+

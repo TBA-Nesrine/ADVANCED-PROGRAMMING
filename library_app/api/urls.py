@@ -39,6 +39,10 @@ urlpatterns = [
     path("admin/orders/<int:order_id>/accept/",admin_accept_order,name="api_admin_accept_order",),
     path('admin/orders/<int:order_id>/refuse/', admin_refuse_order, name='api_admin_refuse_order'),
 
+    path('admin/genres/add/', admin_add_genre),
+    
+     path("admin/genres/", admin_genres_list, name="api_admin_genres_list"),
+    path("admin/genres/delete/<int:genre_id>/", admin_delete_genre, name="api_admin_delete_genre"),
     #user
     path('user/books/', user_books),
     path('user/borrow/', user_borrow_book),

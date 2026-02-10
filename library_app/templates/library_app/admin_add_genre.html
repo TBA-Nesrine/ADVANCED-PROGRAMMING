@@ -1,0 +1,38 @@
+{% extends 'library_app/base_admin.html' %}
+{% block content %}
+
+<h2 class="page-title">Add New Genre</h2>
+
+<form method="POST" action="{% url 'admin_add_genre_page' %}">
+    {% csrf_token %}
+
+    <input
+        type="text"
+        name="name"
+        placeholder="Genre name"
+        required
+        style="padding:10px; width:260px; border-radius:8px; border:1px solid #ddd;"
+    >
+
+    <br><br>
+
+    <button type="submit" class="add-btn">
+        Add Genre
+    </button>
+
+    <a href="{% url 'admin_books' %}" class="add-btn"
+       style="background:#999; margin-left:10px;">
+        Cancel
+    </a>
+</form>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" style="margin-top:15px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
+   
