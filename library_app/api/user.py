@@ -58,16 +58,20 @@ def user_cancel_order(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def user_return_book(request):
-    order = Order.objects.get(id=request.data['order_id'])
-    order.date_return = timezone.now()
-    order.save()
+   order = Order.objects.get(id=request.data['order_id'],user=request.user)
+   order.date_return = timezone.now()
+   order.status = "returned"
+   order.save()
 
-    book = order.book
-    book.quantity += order.quantity
-    book.save()
+   book = order.book
+   book.quantity += 1
+   book.save()
 
-    return Response({"message": "returned"})
+   return Response({"message": "returned"})
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -449,16 +449,21 @@ from django.utils import timezone
 
 @login_required
 def return_book(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    if request.method == "POST":
+        factory = APIRequestFactory()
 
-    if order.status == 'accepted' and order.date_return is None:
-        order.status = 'returned'
-        order.date_return = timezone.now()
-        order.save()
-        messages.success(request, f"You returned '{order.book.title}' successfully!")
-    else:
-        messages.error(request, "This book cannot be returned.")
+        api_request = factory.post(
+            "/api/user/return/",
+            {"order_id": order_id}
+        )
+        api_request.user = request.user
 
+        response = user_return_book(api_request)
+
+        if response.status_code == 200:
+            messages.success(request, "Book returned successfully!")
+        else:
+            messages.error(request, response.data.get("error", "Something went wrong"))
     return redirect("read_books")
 
 
