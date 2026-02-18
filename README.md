@@ -126,8 +126,7 @@ This file is intentionally excluded from version control to protect sensitive cr
 Open **config.py** and add the following test credentials:
 
 ```python
-GOOGLE_CLIENT_ID = "83062460220-4okgb90b02filofc52v0h6fqj062u8go.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "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"
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ```
 
 Save the file.
